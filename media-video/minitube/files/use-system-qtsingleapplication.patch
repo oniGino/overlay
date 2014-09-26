@@ -1,0 +1,17 @@
+--- minitube.pro	2015-09-17 07:14:00.000000000 -0700
++++ minitube.pro.new	2015-09-24 03:27:16.942655793 -0700
+@@ -1,4 +1,4 @@
+-CONFIG += release
++CONFIG += release qtsingleapplication
+ TEMPLATE = app
+ VERSION = 2.5
+ DEFINES += APP_VERSION="$$VERSION"
+@@ -32,8 +32,6 @@
+     contains(QT, gui): QT *= widgets
+ }
+ 
+-include(src/qtsingleapplication/qtsingleapplication.pri)
+-
+ HEADERS += src/video.h \
+     src/searchlineedit.h \
+     src/spacer.h \

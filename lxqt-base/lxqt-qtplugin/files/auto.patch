@@ -1,0 +1,13 @@
+diff --git a/src/lxqtfiledialoghelper.cpp b/src/lxqtfiledialoghelper.cpp
+index 72b0a4e..4cc0376 100644
+--- a/src/lxqtfiledialoghelper.cpp
++++ b/src/lxqtfiledialoghelper.cpp
+@@ -178,7 +178,7 @@ void LXQtFileDialogHelper::applyOptions() {
+         }
+     }
+ #else
+-    filter = opt->initiallySelectedNameFilter();
++    auto filter = opt->initiallySelectedNameFilter();
+     if(!filter.isEmpty()) {
+         selectNameFilter(filter);
+     }

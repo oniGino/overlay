@@ -1,0 +1,11 @@
+<xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<maintainer>
+		<email>ginomccarty@eml.cc</email>
+		<name>Gino</name>
+	</maintainer>
+	<use>
+		<flag name="geoip">Use GeoIP Database</flag>
+	</use>
+</pkgmetadata>

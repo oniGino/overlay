@@ -1,0 +1,74 @@
+--- src/daemon/PowerManager.cpp	2015-08-22 08:17:51.000000000 -0700
++++ src/daemon/PowerManager.cpp.new	2015-11-03 22:15:18.482711309 -0800
+@@ -49,6 +49,58 @@
+         virtual void hybridSleep() const = 0;
+     };
+ 
++    /************************************************/
++    /* PM-UTILS Backend (as failsafe only)          */
++    /************************************************/
++
++    class PMUtilsBackend : public PowerManagerBackend {
++    public:
++    PMUtilsBackend() {
++        
++    }
++
++    ~PMUtilsBackend() {
++
++    }
++
++    Capabilities capabilities() const {
++        Capabilities caps = Capability::PowerOff | Capability::Reboot;
++
++        if(QProcess::execute(QStringLiteral("pm-is-supported --suspend")) == 0 )
++            caps |= Capability::Suspend;
++
++        if(QProcess::execute(QStringLiteral("pm-is-supported --hibernate")) == 0)
++            caps |= Capability::Hibernate;
++
++        if(QProcess::execute(QStringLiteral("pm-is-supported --suspend-hybrid")) == 0 )
++            caps |= Capability::HybridSleep;
++
++
++        return caps;
++    }
++
++            void powerOff() const {
++            QProcess::execute(mainConfig.HaltCommand.get());
++        }
++
++        void reboot() const {
++            QProcess::execute(mainConfig.RebootCommand.get());
++        }
++        
++        void suspend() const {
++            QProcess::execute(QStringLiteral("pm-suspend"));
++        }
++        
++        void hibernate() const {
++            QProcess::execute(QStringLiteral("pm-hibernate"));
++        }
++        
++        void hybridSleep() const {
++            QProcess::execute(QStringLiteral("pm-suspend-hybrid"));
++        }
++    };
++
++
+     /**********************************************/
+     /* UPOWER BACKEND                             */
+     /**********************************************/
+@@ -207,6 +259,12 @@
+         // check if upower interface exists
+         if (interface->isServiceRegistered(UPOWER_SERVICE))
+             m_backends << new UPowerBackend(UPOWER_SERVICE, UPOWER_PATH, UPOWER_OBJECT);
++                                                      
++        // check if pm-utils is installed and only add pm-utils if no other option exists
++        if ( m_backends.empty() && QProcess::execute(QStringLiteral("pm-is-supported")) != -2 )
++        {                                              
++            m_backends << new PMUtilsBackend();
++        } 
+     }
+ 
+     PowerManager::~PowerManager() {

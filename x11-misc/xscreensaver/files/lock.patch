@@ -1,0 +1,204 @@
+--- lock.c	2014-08-04 23:21:30.000000000 -0700
++++ lock2.c	2015-05-16 21:47:49.084306998 -0700
+@@ -149,8 +149,6 @@
+   Pixel button_foreground;
+   Pixel button_background;
+ 
+-  Dimension preferred_logo_width, logo_width;
+-  Dimension preferred_logo_height, logo_height;
+   Dimension thermo_width;
+   Dimension internal_border;
+   Dimension shadow_width;
+@@ -167,7 +165,6 @@
+   Dimension thermo_field_x, thermo_field_y;
+   Dimension thermo_field_height;
+ 
+-  Pixmap logo_pixmap;
+   Pixmap logo_clipmask;
+   int logo_npixels;
+   unsigned long *logo_pixels;
+@@ -356,12 +353,6 @@
+ 					  "passwd.bottomShadowColor",
+ 					  "Dialog.Background" );
+ 
+-  pw->preferred_logo_width = get_integer_resource (si->dpy, 
+-                                                   "passwd.logo.width",
+-						   "Dialog.Logo.Width");
+-  pw->preferred_logo_height = get_integer_resource (si->dpy,
+-                                                    "passwd.logo.height",
+-						    "Dialog.Logo.Height");
+   pw->thermo_width = get_integer_resource (si->dpy, "passwd.thermometer.width",
+ 					   "Dialog.Thermometer.Width");
+   pw->internal_border = get_integer_resource (si->dpy,
+@@ -370,8 +361,6 @@
+   pw->shadow_width = get_integer_resource (si->dpy, "passwd.shadowThickness",
+ 					   "Dialog.ShadowThickness");
+ 
+-  if (pw->preferred_logo_width == 0)  pw->preferred_logo_width = 150;
+-  if (pw->preferred_logo_height == 0) pw->preferred_logo_height = 150;
+   if (pw->internal_border == 0) pw->internal_border = 15;
+   if (pw->shadow_width == 0) pw->shadow_width = 4;
+   if (pw->thermo_width == 0) pw->thermo_width = pw->shadow_width;
+@@ -479,7 +468,6 @@
+       - pw->shadow_width * 4
+       - pw->border_width * 2
+       - pw->thermo_width
+-      - pw->preferred_logo_width
+       - pw->internal_border * 2;
+   /* As the string wraps it makes the window taller which makes the logo wider
+    * which leaves less room for the text which makes the string wrap. Uh-oh, a
+@@ -632,14 +620,6 @@
+ 
+     pw->width += pw->thermo_width + (pw->shadow_width * 3);
+ 
+-    if (pw->preferred_logo_height > pw->height)
+-      pw->height = pw->logo_height = pw->preferred_logo_height;
+-    else if (pw->height > pw->preferred_logo_height)
+-      pw->logo_height = pw->height;
+-
+-    pw->logo_width = pw->logo_height;
+-
+-    pw->width += pw->logo_width;
+   }
+ 
+   attrmask |= CWOverrideRedirect; attrs.override_redirect = True;
+@@ -683,15 +663,6 @@
+       XSetWindowBackground (si->dpy, si->passwd_dialog, pw->background);
+       XSetWindowBorder (si->dpy, si->passwd_dialog, pw->border);
+ 
+-      /* We use the default visual, not ssi->visual, so that the logo pixmap's
+-	 visual matches that of the si->passwd_dialog window. */
+-      pw->logo_pixmap = xscreensaver_logo (ssi->screen,
+-					   /* ssi->current_visual, */
+-					   DefaultVisualOfScreen(screen),
+-					   si->passwd_dialog, cmap,
+-					   pw->background, 
+-					   &pw->logo_pixels, &pw->logo_npixels,
+-					   &pw->logo_clipmask, True);
+     }
+   else /* On successive prompts, just resize the window */
+     {
+@@ -767,7 +738,7 @@
+   gcv.foreground = pw->foreground;
+   gc1 = XCreateGC (si->dpy, si->passwd_dialog, GCForeground, &gcv);
+   gc2 = XCreateGC (si->dpy, si->passwd_dialog, GCForeground, &gcv);
+-  x1 = pw->logo_width + pw->thermo_width + (pw->shadow_width * 3);
++  x1 = pw->thermo_width + (pw->shadow_width * 3);
+   x3 = pw->width - (pw->shadow_width * 2);
+   y1 = (pw->shadow_width * 2) + spacing + spacing;
+ 
+@@ -895,7 +866,7 @@
+ 
+     XSetFont (si->dpy, gc1, pw->date_font->fid);
+     y1 += pw->shadow_width;
+-    y1 += (spacing + tb_height);
++    y1 += (spacing + tb_height*2);
+     y1 += spacing/2;
+     sw = string_width (pw->date_font, buf);
+     x2 = x1 + x2 - sw;
+@@ -932,51 +903,19 @@
+       sw = string_width (pw->button_font, pw->login_label);
+ 
+       /* left aligned button */
+-      x1 = (pw->logo_width + pw->thermo_width + (pw->shadow_width * 3) +
++      x1 = (pw->thermo_width + (pw->shadow_width * 3) +
+ 	    pw->internal_border);
+ 
+       pw->login_button_x = x1;
+       pw->login_button_y = y1;
+     }
+ 
+-  /* The logo
+-   */
+-  x1 = pw->shadow_width * 6;
+-  y1 = pw->shadow_width * 6;
+-  x2 = pw->logo_width - (pw->shadow_width * 12);
+-  y2 = pw->logo_height - (pw->shadow_width * 12);
+-
+-  if (pw->logo_pixmap)
+-    {
+-      Window root;
+-      int x, y;
+-      unsigned int w, h, bw, d;
+-      XGetGeometry (si->dpy, pw->logo_pixmap, &root, &x, &y, &w, &h, &bw, &d);
+-      XSetForeground (si->dpy, gc1, pw->foreground);
+-      XSetBackground (si->dpy, gc1, pw->background);
+-      XSetClipMask (si->dpy, gc1, pw->logo_clipmask);
+-      XSetClipOrigin (si->dpy, gc1, 
+-                      x1 + ((x2 - (int)w) / 2), 
+-                      y1 + ((y2 - (int)h) / 2));
+-      if (d == 1)
+-        XCopyPlane (si->dpy, pw->logo_pixmap, si->passwd_dialog, gc1,
+-                    0, 0, w, h,
+-                    x1 + ((x2 - (int)w) / 2),
+-                    y1 + ((y2 - (int)h) / 2),
+-                    1);
+-      else
+-        XCopyArea (si->dpy, pw->logo_pixmap, si->passwd_dialog, gc1,
+-                   0, 0, w, h,
+-                   x1 + ((x2 - (int)w) / 2),
+-                   y1 + ((y2 - (int)h) / 2));
+-    }
+-
+   /* The thermometer
+    */
+   XSetForeground (si->dpy, gc1, pw->thermo_foreground);
+   XSetForeground (si->dpy, gc2, pw->thermo_background);
+ 
+-  pw->thermo_field_x = pw->logo_width + pw->shadow_width;
++  pw->thermo_field_x = pw->shadow_width;
+   pw->thermo_field_y = pw->shadow_width * 5;
+   pw->thermo_field_height = pw->height - (pw->shadow_width * 10);
+ 
+@@ -986,26 +925,17 @@
+   XDrawRectangle (si->dpy, si->passwd_dialog, gc1, x1, y1, x2-1, y2-1);
+ #endif
+ 
+-  /* The shadow around the logo
+-   */
+-  draw_shaded_rectangle (si->dpy, si->passwd_dialog,
+-			 pw->shadow_width * 4,
+-			 pw->shadow_width * 4,
+-			 pw->logo_width - (pw->shadow_width * 8),
+-			 pw->logo_height - (pw->shadow_width * 8),
+-			 pw->shadow_width,
+-			 pw->shadow_bottom, pw->shadow_top);
+-
+   /* The shadow around the thermometer
+    */
++  /*
+   draw_shaded_rectangle (si->dpy, si->passwd_dialog,
+-			 pw->logo_width,
++			 pw->shadow_width * 4,
+ 			 pw->shadow_width * 4,
+ 			 pw->thermo_width + (pw->shadow_width * 2),
+ 			 pw->height - (pw->shadow_width * 8),
+ 			 pw->shadow_width,
+ 			 pw->shadow_bottom, pw->shadow_top);
+-
++  */
+ #if 1
+   /* Solid border inside the thermometer. */
+   XSetForeground (si->dpy, gc1, pw->foreground);
+@@ -1016,10 +946,10 @@
+ 
+   /* The shadow around the whole window
+    */
+-  draw_shaded_rectangle (si->dpy, si->passwd_dialog,
++  /*draw_shaded_rectangle (si->dpy, si->passwd_dialog,
+ 			 0, 0, pw->width, pw->height, pw->shadow_width,
+ 			 pw->shadow_top, pw->shadow_bottom);
+-
++  */
+   XFreeGC (si->dpy, gc1);
+   XFreeGC (si->dpy, gc2);
+ 
+@@ -1397,8 +1327,6 @@
+   if (pw->shadow_bottom != black && pw->shadow_bottom != white)
+     XFreeColors (si->dpy, cmap, &pw->shadow_bottom, 1, 0L);
+ 
+-  if (pw->logo_pixmap)
+-    XFreePixmap (si->dpy, pw->logo_pixmap);
+   if (pw-> logo_clipmask)
+     XFreePixmap (si->dpy, pw->logo_clipmask);
+   if (pw->logo_pixels)
