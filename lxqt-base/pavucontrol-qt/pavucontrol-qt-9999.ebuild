@@ -21,12 +21,11 @@ LICENSE="GPL-2 LGPL-2.1+"
 SLOT="0"
 
 CDEPEND="
-	x11-misc/xdg-user-dirs
 	media-sound/pulseaudio
 	dev-qt/qtcore:5
 	dev-qt/qtdbus:5
 	dev-qt/qtgui:5
-	lxqt-base/lxqt-build-tools"
+	dev-util/lxqt-build-tools"
 DEPEND="${CDEPEND}
 	dev-util/intltool
 	sys-devel/gettext

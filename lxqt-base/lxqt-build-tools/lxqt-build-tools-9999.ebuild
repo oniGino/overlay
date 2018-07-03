@@ -23,7 +23,6 @@ DEPEND="
 	dev-qt/qtcore:5
 	dev-qt/qtgui:5
 	dev-qt/qtx11extras:5
-	~dev-libs/libqtxdg-${PV}
 	kde-frameworks/kwindowsystem
 "
 RDEPEND="${DEPEND}"

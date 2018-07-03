@@ -3,10 +3,10 @@
 # $Id$
 
 EAPI=5
-PYTHON_COMPAT=( python3_5 )
+PYTHON_COMPAT=( python3_5 python3_6 )
 DISTUTILS_SINGLE_IMPL=1
 DISABLE_AUTOFORMATTING=true
-inherit eutils distutils-r1 readme.gentoo git-r3
+inherit eutils distutils-r1 readme.gentoo git-r3 xdg-utils
 
 DESCRIPTION="A cross-platform music tagger"
 HOMEPAGE="http://picard.musicbrainz.org/"
@@ -23,7 +23,7 @@ done
 
 DEPEND="dev-python/PyQt5[${PYTHON_USEDEP}]
 	dev-python/setuptools[${PYTHON_USEDEP}]
-	media-libs/mutagen[${PYTHON_USEDEP}]
+	>=media-libs/mutagen-1.40.0[${PYTHON_USEDEP}]
 	cdda? ( dev-python/python-discid[${PYTHON_USEDEP}] )
 	acoustid? ( >=media-libs/chromaprint-1.0[tools] )"
 RDEPEND="${DEPEND}"

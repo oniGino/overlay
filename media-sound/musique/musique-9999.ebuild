@@ -33,10 +33,10 @@ RDEPEND="
 	dev-qt/qtgui:5
 	dev-qt/qtwidgets
 	dev-qt/qtnetwork
-	dev-qt/qtsingleapplication[qt5]
+	dev-qt/qtsingleapplication
 	dev-qt/qtscript
 	dev-qt/qtsql:5[sqlite]
-	|| ( media-libs/phonon[qt5] dev-qt/qtphonon:5 )
+	|| ( media-libs/phonon dev-qt/qtphonon:5 )
 	media-libs/taglib
 "
 DEPEND="${RDEPEND}"
