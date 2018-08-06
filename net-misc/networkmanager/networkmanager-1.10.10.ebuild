@@ -49,7 +49,7 @@ COMMON_DEPEND="
 		net-firewall/iptables )
 	consolekit? ( >=sys-auth/consolekit-1.0.0 )
 	dhclient? ( >=net-misc/dhcp-4[client] )
-	dhcpcd? ( net-misc/dhcpcd )
+	dhcpcd? ( net-misc/dhcpcd:=[ipv6] )
 	elogind? ( >=sys-auth/elogind-219 )
 	gnutls? (
 		dev-libs/libgcrypt:0=[${MULTILIB_USEDEP}]
@@ -180,7 +180,8 @@ multilib_src_configure() {
 		$(multilib_native_use_enable bluetooth bluez5-dun)
 		$(use_with dhclient)
 		$(use_with dhcpcd)
-		$(multilib_native_use_enable introspection)
+		--with-config-dhcp-default=$(multilib_native_usex dhcpcd dhcpcd $(multilib_native_usex dhclient dhclient internal))
+$(multilib_native_use_enable introspection)
 		$(use_enable json json-validation)
 		$(multilib_native_use_enable ppp)
 		--without-libpsl
@@ -198,7 +199,10 @@ multilib_src_configure() {
 		$(multilib_native_use_with wext)
 		$(multilib_native_use_enable wifi)
 	)
-
+	
+	if use dhcpcd; then
+		myconf+=( --with-dhcpcd-supports-ipv6=yes )
+	fi
 	if multilib_is_native_abi && use policykit; then
 		myconf+=( --enable-polkit=yes )
 	else

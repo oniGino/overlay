@@ -9,13 +9,7 @@
 			<email>proxy-maint@gentoo.org</email>
 			<name>Proxy Maintainers</name>
 	</maintainer>
-	<use>
-		<flag name="webkit">
-	enables the application to use advanced HTML rendering and fetching 
-	remote images and other data
-	</flag>
-	</use>
 	<upstream>
-		<remote-id type="github">hluk/CopyQ</remote-id>
+		<remote-id type="github">Chemrat/redshift-qt</remote-id>
 	</upstream>
 </pkgmetadata>

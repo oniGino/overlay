@@ -10,7 +10,7 @@ SRC_URI="https://github.com/Chemrat/${PN}/archive/v${PV}.tar.gz"
 
 LICENSE="MIT"
 SLOT="0"
-KEYWORDS="amd64"
+KEYWORDS="~amd64"
 IUSE="+icons"
 
 DEPEND="dev-qt/qtgui:5
