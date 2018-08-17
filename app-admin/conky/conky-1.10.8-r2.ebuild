@@ -11,7 +11,7 @@ SRC_URI="https://github.com/brndnmtthws/${PN}/archive/v${PV}.tar.gz -> ${P}.tar.
 
 LICENSE="GPL-3 BSD LGPL-2.1 MIT"
 SLOT="0"
-KEYWORDS="~alpha amd64 ~arm ~ppc ppc64 sparc x86"
+KEYWORDS="~alpha ~amd64 ~arm ~ppc ~ppc64 ~sparc ~x86"
 IUSE="apcupsd audacious cmus curl eve hddtemp ical iconv imlib iostats ipv6 irc
 	lua-cairo lua-imlib lua-rsvg math moc mpd mysql nano-syntax ncurses
 	nvidia +portmon pulseaudio rss systemd thinkpad truetype vim-syntax
@@ -54,7 +54,7 @@ DEPEND_COMMON="
 	weather-metar? ( net-misc/curl )
 	weather-xoap? ( dev-libs/libxml2 net-misc/curl )
 	webserver? ( net-libs/libmicrohttpd )
-	>=dev-lang/lua-5.1.4-r8
+	dev-lang/lua:5.3
 	"
 RDEPEND="
 	${DEPEND_COMMON}
@@ -73,7 +73,10 @@ CONFIG_CHECK=~IPV6
 
 DOCS=( README.md TODO ChangeLog NEWS AUTHORS )
 
-PATCHES=( "${FILESDIR}"/${P}-use-pkgconfig.patch )
+PATCHES=(
+	"${FILESDIR}"/${P}-use-pkgconfig.patch
+	"${FILESDIR}"/${P}-libical-3.patch
+)
 
 DISABLE_AUTOFORMATTING="yes"
 DOC_CONTENTS="You can find sample configurations at ${ROOT%/}/usr/share/doc/${PF}.
