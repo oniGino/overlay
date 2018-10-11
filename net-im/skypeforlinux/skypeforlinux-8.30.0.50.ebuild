@@ -14,14 +14,14 @@ SRC_URI="https://repo.skype.com/rpm/stable/${PN}_${PV}-1.x86_64.rpm"
 LICENSE="Skype-TOS MIT MIT-with-advertising BSD-1 BSD-2 BSD Apache-2.0 Boost-1.0 ISC CC-BY-SA-3.0 CC0-1.0 openssl ZLIB APSL-2 icu Artistic-2 LGPL-2.1"
 SLOT="0"
 KEYWORDS="-* ~amd64"
-IUSE="pax_kernel gnome-keyring"
+IUSE="gnome-keyring pax_kernel"
 
 S="${WORKDIR}"
 QA_PREBUILT="*"
 RESTRICT="mirror bindist strip" #299368
 
 RDEPEND="
-	gnome-keyring? ( app-crypt/libsecret[${MULTILIB_USEDEP}] )
+	gnome-keyring? ( app-crypt/libsecret[${MULTILIB_USEDEP}] ) 
 	dev-libs/atk[${MULTILIB_USEDEP}]
 	dev-libs/expat[${MULTILIB_USEDEP}]
 	dev-libs/glib:2[${MULTILIB_USEDEP}]

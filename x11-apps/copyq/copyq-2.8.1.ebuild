@@ -1,22 +1,18 @@
-# Copyright 1999-2018 Gentoo Foundation
+# Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
 
 inherit cmake-utils multilib
 
-MY_P=CopyQ-${PV}
-
 DESCRIPTION="Clipboard manager with advanced features"
 HOMEPAGE="https://github.com/hluk/CopyQ"
-SRC_URI="https://github.com/hluk/CopyQ/archive/v${PV}.tar.gz -> ${MY_P}.tar.gz"
+SRC_URI="https://github.com/hluk/CopyQ/archive/v${PV}.tar.gz -> ${P}.tar.gz"
 
-LICENSE="GPL-3+"
+LICENSE="GPL-3"
 SLOT="0"
 KEYWORDS="~amd64 ~x86 ~amd64-linux ~x86-linux"
 IUSE="test webkit"
-
-RESTRICT="!test? ( test )"
 
 RDEPEND="
 	dev-qt/qtcore:5
@@ -34,7 +30,8 @@ DEPEND="${RDEPEND}
 	dev-qt/linguist-tools:5
 	test? ( dev-qt/qttest:5 )
 "
-S=${WORKDIR}/$MY_P
+
+S=${WORKDIR}/CopyQ-${PV}
 
 src_configure() {
 	local mycmakeargs=(
