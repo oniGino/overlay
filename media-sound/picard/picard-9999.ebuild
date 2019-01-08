@@ -6,7 +6,7 @@ EAPI=5
 PYTHON_COMPAT=( python3_5 python3_6 )
 DISTUTILS_SINGLE_IMPL=1
 DISABLE_AUTOFORMATTING=true
-inherit eutils distutils-r1 readme.gentoo git-r3 xdg-utils
+inherit eutils distutils-r1 readme.gentoo-r1 git-r3 xdg-utils
 
 DESCRIPTION="A cross-platform music tagger"
 HOMEPAGE="http://picard.musicbrainz.org/"
@@ -59,7 +59,7 @@ src_install() {
 		$(use nls || echo "--disable-locales")
 
 	doicon picard.ico
-	domenu picard.desktop
+	domenu org.musicbrainz.Picard.desktop
 	readme.gentoo_create_doc
 	_clean_up_locales
 }
