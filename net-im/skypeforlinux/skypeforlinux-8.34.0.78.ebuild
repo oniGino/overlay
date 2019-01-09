@@ -41,7 +41,7 @@ RDEPEND="
 	virtual/ttf-fonts
 	x11-libs/cairo[${MULTILIB_USEDEP}]
 	x11-libs/gdk-pixbuf:2[${MULTILIB_USEDEP}]
-	x11-libs/gtk+:2[${MULTILIB_USEDEP}]
+	x11-libs/gtk+:3[${MULTILIB_USEDEP}]
 	x11-libs/libX11[${MULTILIB_USEDEP}]
 	x11-libs/libXScrnSaver[${MULTILIB_USEDEP}]
 	x11-libs/libXcomposite[${MULTILIB_USEDEP}]
