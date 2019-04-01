@@ -18,8 +18,8 @@ KEYWORDS="~x86 ~amd64"
 IUSE=""
 
 DEPEND="
-     >=media-libs/libpng-1.2.46
-     >=x11-libs/gtk+-2.24.8-r1:2
+     >=media-libs/libpng-1.6.35
+     >=x11-libs/gtk+-3.24.1:3
      x11-libs/cairo
      gnome-base/gconf
 "

@@ -1,4 +1,4 @@
-# Copyright 1999-2018 Gentoo Authors
+# Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
@@ -19,15 +19,15 @@ SLOT="0" # add subslot if libnm-util.so.2 or libnm-glib.so.4 bumps soname versio
 IUSE="audit bluetooth connection-sharing consolekit +dhclient dhcpcd elogind gnutls +introspection iwd json kernel_linux +nss +modemmanager ncurses ofono ovs policykit +ppp resolvconf selinux systemd teamd test vala +wext +wifi"
 
 REQUIRED_USE="
-	bluetooth? ( modemmanager )
 	iwd? ( wifi )
+	bluetooth? ( modemmanager )
 	vala? ( introspection )
 	wext? ( wifi )
 	^^ ( nss gnutls )
 	?? ( consolekit elogind systemd )
 "
 
-KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~ia64 ~ppc ~ppc64 ~sparc ~x86"
+KEYWORDS="~alpha amd64 ~arm ~arm64 ~ia64 ~ppc ~ppc64 ~sparc x86"
 
 # gobject-introspection-0.10.3 is needed due to gnome bug 642300
 # wpa_supplicant-0.7.3-r3 is needed due to bug 359271
