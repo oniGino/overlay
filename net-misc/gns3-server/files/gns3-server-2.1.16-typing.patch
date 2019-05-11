@@ -1,0 +1,10 @@
+--- a/requirements.txt	2019-03-20 20:41:44.000000000 -0700
++++ b/requirements.txt	2019-04-23 12:16:29.564870881 -0700
+@@ -6,6 +6,6 @@
+ raven>=5.23.0
+ psutil>=3.0.0
+ zipstream>=1.1.4
+-typing>=3.5.3.0 # Otherwise yarl fails with python 3.4
++typing>=3.5.3.0;python_version<"3.5" # Otherwise yarl fails with python 3.4
+ prompt-toolkit==1.0.15
+ async-timeout<3.0.0 # pyup: ignore; 3.0 drops support for python 3.4
