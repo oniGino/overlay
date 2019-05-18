@@ -98,21 +98,17 @@ DEPEND="${COMMON_DEPEND}
 	libinput? (	x11-drivers/xf86-input-libinput )
 "
 RDEPEND="${COMMON_DEPEND}
+	$(add_frameworks_dep kirigami)
 	$(add_frameworks_dep qqc2-desktop-style)
 	$(add_plasma_dep breeze)
 	$(add_plasma_dep kde-cli-tools)
-	$(add_plasma_dep oxygen)
 	$(add_qt_dep qtgraphicaleffects)
+	$(add_qt_dep qtquickcontrols2)
 	sys-apps/util-linux
 	x11-apps/setxkbmap
 	!kde-apps/kcontrol
 	!<kde-apps/kde4-l10n-17.08.1-r1
 	!kde-apps/knetattach[handbook]
-	!kde-misc/kcm-touchpad
-	!kde-plasma/plasma-desktop:4
-	!kde-plasma/plasma-workspace:4
-	!kde-plasma/solid-actions-kcm:4
-	!kde-plasma/systemsettings:4
 "
 
 src_configure() {
