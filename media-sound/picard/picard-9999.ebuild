@@ -29,7 +29,7 @@ DEPEND="dev-python/PyQt5[${PYTHON_USEDEP}]
 RDEPEND="${DEPEND}"
 
 RESTRICT="test" # doesn't work with ebuilds
-DOCS="AUTHORS.txt NEWS.txt"
+DOCS="AUTHORS.txt"
 
 DOC_CONTENTS="If you are upgrading Picard and it does not start,
 try removing Picard's settings:

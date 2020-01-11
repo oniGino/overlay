@@ -19,14 +19,12 @@ IUSE=""
 PLOCALES=( "en" "en-AU" "en-CA" "en-GB" "en-US" "en-ZA" )
 IUSE+="${PLOCALES[@]/#/l10n_}"
 REQUIRED_USE="|| ( ${IUSE[@]} )"
-RDEPEND="!<dev-libs/hyphen-2.8.8-r1"
 
 src_prepare() {
 	if use l10n_en-GB || use l10n_en; then
 		MYSPELL_HYPH=( "hyph_en_GB.dic" )
 	fi
 	if use l10n_en-US || use l10n_en; then
-		MYSPELL_HYPH=( "hyph_en_US.dic" )
 		MYSPELL_THES=(
 			"th_en_US_v2.dat"
 			"th_en_US_v2.idx"
