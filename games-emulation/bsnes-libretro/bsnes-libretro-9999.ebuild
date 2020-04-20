@@ -37,7 +37,7 @@ src_compile() {
 		libretro-core_src_compile
 		myemakeargs=( ${myemakeargs[@]/profile=*/} )
 	# Never forget to move the file where the eclass expect it
-	mv out/"${PN%-libretro}"2014_balanced_libretro.so .
+	mv out/"${PN%-libretro}"2014_balanced_libretro.so "${PN%-libretro}"_balanced_libretro.so 
 	fi
 	if use profile_performance; then
 		emake clean

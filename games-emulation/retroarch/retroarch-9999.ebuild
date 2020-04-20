@@ -1,8 +1,9 @@
-# Copyright 1999-2019 Gentoo Authors
+# Copyright 1999-2018 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 
+# TODO: Rewrite src_prepare() and src_configure()
 
-EAPI=7
+EAPI=6
 
 PYTHON_COMPAT=( python{3_4,3_5,3_6} )
 
@@ -15,7 +16,7 @@ HOMEPAGE="http://www.retroarch.com"
 if [[ ${PV} = 9999 ]]; then
 	# Inherit and EGIT_REPO_URI already set by eclass
 	SRC_URI=""
-	KEYWORDS="amd64"
+	KEYWORDS=""
 else
 	SRC_URI="https://github.com/${LIBRETRO_REPO_NAME}/archive/v${PV}.tar.gz -> ${P}.tar.gz"
 	RESTRICT="primaryuri"
@@ -31,7 +32,7 @@ SLOT="0"
 #shouldn't. When upstream resolves this, remove this entry. See also:
 #    https://github.com/stefan-gr/abendbrot/issues/7#issuecomment-204541979
 
-IUSE="+7zip alsa +armvfp +assets cg cheevos +cores +database debug dispmanx egl ffmpeg gles2 gles3 jack +joypad_autoconfig kms lakka libass libusb +materialui miniupnpc +neon +network openal +opengl osmesa oss +overlays pulseaudio qt5 sdl sdl2 +shaders +truetype +threads +udev v4l2 videocore vulkan wayland X xinerama +xmb xv zlib cpu_flags_x86_sse2 python"
+IUSE="+7zip alsa +armvfp +assets cg cheevos +cores +database debug dispmanx egl ffmpeg gles2 gles3 jack +joypad_autoconfig kms lakka libass libusb +materialui miniupnpc +neon +network openal +opengl osmesa oss +overlays pulseaudio qt5 sdl sdl2 +shaders +truetype +threads +udev v4l2 videocore vulkan wayland X xinerama +xmb +xml xv zlib cpu_flags_x86_sse2 python"
 
 REQUIRED_USE="
 	|| ( alsa jack openal oss pulseaudio )
@@ -80,11 +81,11 @@ RDEPEND="
 	overlays? ( games-emulation/common-overlays:0= )
 	pulseaudio? ( media-sound/pulseaudio:0= )
 	python? ( ${PYTHON_DEPS} )
-	qt5? (
-			dev-qt/qtcore:5
-			dev-qt/qtgui:5
-			dev-qt/qtopengl:5
-			dev-qt/qtwidgets:5
+	qt5? ( 
+	        dev-qt/qtcore:5 
+	        dev-qt/qtgui:5
+	        dev-qt/qtopengl:5
+	        dev-qt/qtwidgets:5
 	)
 	sdl? ( >=media-libs/libsdl-1.2.10:0=[joystick] )
 	sdl2? ( media-libs/libsdl2:0=[joystick] )
@@ -99,6 +100,7 @@ RDEPEND="
 		>=x11-libs/libxkbcommon-0.4.0:0=
 	)
 	xinerama? ( x11-libs/libXinerama:0= )
+	xml? ( dev-libs/libxml2:2= )
 	xv? ( x11-libs/libXv:0= )
 	zlib? ( sys-libs/zlib:0= )
 "
@@ -109,8 +111,6 @@ DEPEND="${RDEPEND}
 PDEPEND="!vulkan? ( shaders? ( games-emulation/glsl-shaders:0= ) )
 		!vulkan? ( cg? ( games-emulation/common-shaders:0= ) )
 "
-
-PATCHES=( "${FILESDIR}/${P}-build.patch" )
 
 pkg_setup() {
 	use python && python-single-r1_pkg_setup
@@ -176,7 +176,6 @@ src_prepare() {
 	default_src_prepare
 }
 
-
 src_configure() {
 	if use cg; then
 		append-ldflags -L"${EROOT}"opt/nvidia-cg-toolkit/$(get_libdir)
@@ -197,7 +196,13 @@ src_configure() {
 
 	# Note that OpenVG support is hard-disabled. (See ${RDEPEND} above.)
 	# miniupnpc requires now at least version 2.0
-	econf \
+	./configure \
+		--prefix=/usr \
+		--build=x86_64-pc-linux-gnu \
+		--host=x86_64-pc-linux-gnu \
+		--mandir=/usr/share/man \
+		--sysconfdir=/etc \
+		--docdir=/usr/share/doc/retroarch-${PV} \
 		$(use_enable 7zip) \
 		$(use_enable alsa) \
 		$(use_enable armvfp floathard) \
@@ -222,7 +227,6 @@ src_configure() {
 		$(use_enable osmesa) \
 		$(use_enable oss) \
 		$(use_enable pulseaudio pulse) \
-		$(use_enable python) \
 		$(use_enable qt5 qt) \
 		$(use_enable sdl) \
 		$(use_enable sdl2) \
@@ -238,8 +242,7 @@ src_configure() {
 		$(use_enable xv xvideo) \
 		$(use_enable zlib) \
 		--enable-dynamic \
-		--disable-vg \
-		--with-man_dir="${EROOT}"usr/share/man/man1
+		--disable-vg
 }
 
 src_compile() {
