@@ -40,6 +40,6 @@ src_install() {
 }
 
 pkg_postinst() {
-	elog "You may install some additional utils, so check them in:"
+	elog "You may want to install some additional utils, check in:"
 	elog "https://code.visualstudio.com/Docs/setup#_additional-tools"
 }

@@ -1,9 +1,9 @@
 # Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=6
+EAPI=7
 
-inherit cmake-utils gnome2-utils
+inherit cmake xdg-utils
 
 MY_P=CopyQ-${PV}
 
@@ -46,13 +46,15 @@ src_configure() {
 		-DWITH_WEBKIT=$(usex webkit)
 		-DCMAKE_INSTALL_MANDIR="share/man"
 	)
-	cmake-utils_src_configure
+	cmake_src_configure
 }
 
 pkg_postinst() {
-	gnome2_icon_cache_update
+	xdg_desktop_database_update
+	xdg_icon_cache_update
 }
 
 pkg_postrm() {
-	gnome2_icon_cache_update
+	xdg_desktop_database_update
+	xdg_icon_cache_update
 }
