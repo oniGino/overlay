@@ -2,7 +2,7 @@
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
-PYTHON_COMPAT=( python3_{7,8} )
+PYTHON_COMPAT=( python3_{7,8,9} )
 
 inherit systemd autotools eutils xdg-utils python-r1
 
@@ -31,7 +31,7 @@ RDEPEND="${DEPEND}
 		x11-libs/gtk+:3[introspection]
 		dev-python/pyxdg[${PYTHON_USEDEP}] )"
 REQUIRED_USE="gtk? ( ${PYTHON_REQUIRED_USE} )"
-PATCHES=( ${FILESDIR}/metainfo.patch )
+#PATCHES=( ${FILESDIR}/metainfo.patch )
 
 src_prepare() {
 	default

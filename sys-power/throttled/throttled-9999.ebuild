@@ -3,7 +3,7 @@
 
 EAPI=7
 
-PYTHON_COMPAT=( python3_6 python3_7 )
+PYTHON_COMPAT=( python3_6 python3_7 python3_9 )
 
 inherit python-single-r1 linux-info systemd git-r3
 
