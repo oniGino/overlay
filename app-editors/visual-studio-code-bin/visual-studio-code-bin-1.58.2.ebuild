@@ -7,7 +7,7 @@ inherit desktop eutils pax-utils
 
 DESCRIPTION="Multiplatform Visual Studio Code from Microsoft"
 HOMEPAGE="https://code.visualstudio.com"
-SRC_URI="https://go.microsoft.com/fwlink/?LinkID=620884 -> ${P}.tar.gz"
+SRC_URI="https://az764295.vo.msecnd.net/stable/c3f126316369cd610563c75b1b1725e0679adfb3/code-stable-x64-1626303100.tar.gz -> ${P}.tar.gz"
 
 RESTRICT="mirror strip"
 
