@@ -27,12 +27,12 @@ RDEPEND="${PYTHON_DEPS}
 	)"
 	#x11-misc/wmctrl"
 	#x11-libs/libnotify[introspection]
-	#$(python_gen_cond_dep '
-	#	dev-python/dbus-python[${PYTHON_USEDEP}]
-	#	dev-python/pygobject:3[${PYTHON_USEDEP}]
-	#	dev-python/setproctitle[${PYTHON_USEDEP}]
-	#	dev-python/xapp[${PYTHON_USEDEP}]
-	#')
+	$(python_gen_cond_dep '
+		dev-python/dbus-python[${PYTHON_USEDEP}]
+		dev-python/pygobject:3[${PYTHON_USEDEP}]
+		dev-python/setproctitle[${PYTHON_USEDEP}]
+	')
+#	dev-python/xapp[${PYTHON_USEDEP}]
 DEPEND="${RDEPEND}"
 
 src_prepare() {
