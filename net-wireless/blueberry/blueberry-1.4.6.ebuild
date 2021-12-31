@@ -3,7 +3,7 @@
 
 EAPI=7
 
-PYTHON_COMPAT=( python3_{8,9} )
+PYTHON_COMPAT=( python3_{8,9,10} )
 
 inherit gnome2-utils python-single-r1 xdg-utils
 
@@ -14,28 +14,34 @@ SRC_URI="https://github.com/linuxmint/${PN}/archive/${PV}.tar.gz -> ${P}.tar.gz"
 LICENSE="GPL-3"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
-IUSE=""
+IUSE="+appindicator"
 REQUIRED_USE="${PYTHON_REQUIRED_USE}"
 
 RDEPEND="${PYTHON_DEPS}
+	$(python_gen_cond_dep '
+		dev-python/dbus-python[${PYTHON_USEDEP}]
+		dev-python/pygobject:3[${PYTHON_USEDEP}]
+		dev-python/setproctitle[${PYTHON_USEDEP}]
+		!appindicator? ( dev-python/xapp[${PYTHON_USEDEP}] )
+	')
 	>=net-wireless/gnome-bluetooth-3.14[introspection]
+	appindicator? ( dev-libs/libappindicator )
 	net-wireless/bluez[obex]
 	net-wireless/bluez-tools
 	|| (
 		>=sys-apps/util-linux-2.31_rc1
 		net-wireless/rfkill
+	)
+	!appindicator? (
+		x11-misc/wmctrl
+		x11-libs/libnotify[introspection]
 	)"
-	#x11-misc/wmctrl"
-	#x11-libs/libnotify[introspection]
-	$(python_gen_cond_dep '
-		dev-python/dbus-python[${PYTHON_USEDEP}]
-		dev-python/pygobject:3[${PYTHON_USEDEP}]
-		dev-python/setproctitle[${PYTHON_USEDEP}]
-	')
-#	dev-python/xapp[${PYTHON_USEDEP}]
 DEPEND="${RDEPEND}"
 
 src_prepare() {
+	if use appindicator; then
+		eapply "${FILESDIR}/${PN}-${PV}-appindicator.patch"
+	fi
 	default
 	python_fix_shebang usr/lib
 }
