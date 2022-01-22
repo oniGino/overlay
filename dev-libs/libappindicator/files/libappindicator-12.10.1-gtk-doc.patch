@@ -1,0 +1,18 @@
+--- Makefile.am	2020-07-06 06:22:59.000000000 -0700
++++ Makefile.am.b	2022-01-01 22:12:36.146858154 -0800
+@@ -14,14 +14,13 @@
+ 
+ EXTRA_DIST = \
+ 	m4/introspection.m4 \
+-	gtk-doc.make \
+ 	omf.make \
+ 	xmldocs.make \
+ 	autogen.sh \
+ 	COPYING.LGPL.2.1 \
+ 	ChangeLog
+ 
+-DISTCHECK_CONFIGURE_FLAGS = --enable-gtk-doc --enable-localinstall --enable-introspection
++DISTCHECK_CONFIGURE_FLAGS = --enable-localinstall --enable-introspection
+ 
+ dist-hook:
+ 	@if test -d "$(top_srcdir)/.bzr"; \
