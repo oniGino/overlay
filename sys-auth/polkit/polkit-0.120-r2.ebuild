@@ -1,7 +1,7 @@
 # Copyright 1999-2021 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=7
+EAPI=8
 
 inherit meson pam pax-utils systemd xdg-utils
 
@@ -57,7 +57,9 @@ PDEPEND="
 PATCHES=(
 	"${FILESDIR}"/${PN}-${PV}-duktape.patch
 	"${FILESDIR}"/${PN}-${PV}-duktape-meson.patch
-	)
+	"${FILESDIR}/polkit-0.120-meson.patch"
+	"${FILESDIR}/polkit-0.120-CVE-2021-4043.patch"
+)
 DOCS=( docs/TODO HACKING NEWS README )
 
 QA_MULTILIB_PATHS="
