@@ -13,7 +13,8 @@ SLOT="0"
 KEYWORDS="amd64"
 
 DEPEND="gui-libs/gtk
-		net-wireless/iwd"
+		net-wireless/iwd
+		media-gfx/qrencode"
 RDEPEND="${DEPEND}"
 BDEPEND=""
 
@@ -24,7 +25,7 @@ src_prepare() {
 		-e 's/^CFLAGS=/CFLAGS:=$(CFLAGS) /' \
 		-e 's/^LDLIBS=/LDLIBS:=$(LDFLAGS) /' \
 		-e 's/-O3$/${CFLAGS}/' \
-		-e 's/^autostartdir=/autostartdir=$(PREFIX)/' \
+		-e 's/^confdir=/confdir=$(PREFIX)/' \
 		Makefile || die
 }
 
