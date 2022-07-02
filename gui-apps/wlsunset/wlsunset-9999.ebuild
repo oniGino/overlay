@@ -11,7 +11,6 @@ HOMEPAGE="https://git.sr.ht/~kennylevinsen/wlsunset"
 if [[ ${PV} == 9999 ]]; then
         inherit git-r3
         EGIT_REPO_URI="https://git.sr.ht/~kennylevinsen/${PN}"
-		EGIT_BRANCH="main"
 fi
 
 LICENSE="GPL-3"

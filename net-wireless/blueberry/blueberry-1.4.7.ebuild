@@ -24,7 +24,7 @@ RDEPEND="${PYTHON_DEPS}
 		dev-python/setproctitle[${PYTHON_USEDEP}]
 		!appindicator? ( dev-python/xapp[${PYTHON_USEDEP}] )
 	')
-	>=net-wireless/gnome-bluetooth-3.14[introspection]
+	=net-wireless/gnome-bluetooth-3*[introspection]
 	appindicator? ( dev-libs/libappindicator )
 	net-wireless/bluez[obex]
 	net-wireless/bluez-tools

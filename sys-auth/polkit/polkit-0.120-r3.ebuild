@@ -59,6 +59,7 @@ PATCHES=(
 	"${FILESDIR}"/${PN}-${PV}-duktape-meson.patch
 	"${FILESDIR}/polkit-0.120-meson.patch"
 	"${FILESDIR}/polkit-0.120-CVE-2021-4043.patch"
+	"${FILESDIR}/polkit-0.120-CVE-2021-4115.patch"
 )
 DOCS=( docs/TODO HACKING NEWS README )
 

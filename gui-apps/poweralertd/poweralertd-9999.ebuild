@@ -11,7 +11,7 @@ HOMEPAGE="https://git.sr.ht/~kennylevinsen/poweralertd"
 if [[ ${PV} == 9999 ]]; then
         inherit git-r3
         EGIT_REPO_URI="https://git.sr.ht/~kennylevinsen/poweralertd"
-		EGIT_BRANCH="main"
+		EGIT_BRANCH="master"
 fi
 
 LICENSE="GPL-3"

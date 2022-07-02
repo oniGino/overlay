@@ -12,7 +12,7 @@ LICENSE="GPL-3+"
 SLOT="0"
 KEYWORDS="amd64"
 
-DEPEND="x11-libs/gtk+:3
+DEPEND="gui-libs/gtk
 		net-wireless/iwd"
 RDEPEND="${DEPEND}"
 BDEPEND=""
@@ -24,11 +24,12 @@ src_prepare() {
 		-e 's/^CFLAGS=/CFLAGS:=$(CFLAGS) /' \
 		-e 's/^LDLIBS=/LDLIBS:=$(LDFLAGS) /' \
 		-e 's/-O3$/${CFLAGS}/' \
+		-e 's/^autostartdir=/autostartdir=$(PREFIX)/' \
 		Makefile || die
 }
 
 src_install() {
-	emake prefix="${ED}/usr" install
+	emake PREFIX="${ED}/usr" install
 	gunzip "${ED}/usr/share/man/man1/iwgtk.1.gz" || die
 }
 
