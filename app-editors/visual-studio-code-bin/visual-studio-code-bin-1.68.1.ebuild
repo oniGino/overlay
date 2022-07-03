@@ -31,12 +31,16 @@ src_install() {
 	pax-mark m code
 	insinto "/opt/${PN}"
 	doins -r *
-	dosym "../../opt/${PN}/code" "usr/bin/${PN}"
-	make_wrapper "${PN}" "../../opt/${PN}/code"
+	fperms +x "/opt/${PN}/code"
+	fperms +x "/opt/${PN}/bin/code"
+	fperms +x "/opt/${PN}/resources/app/node_modules.asar.unpacked/@vscode/ripgrep/bin/rg"
+	dobin "bin/code"
+	make_wrapper "${PN}" "/opt/${PN}/code"
 	make_desktop_entry "${PN}" "Visual Studio Code" "${PN}" "Development;IDE"
 	newicon "resources/app/resources/linux/code.png" "visual-studio-code.png"
 	dodoc "resources/app/LICENSE.rtf"
-	fperms +x "/opt/${PN}/code"
+	insinto "/etc/bash_completion.d"
+	doins "resources/completions/bash/code"
 }
 
 pkg_postinst() {
