@@ -3,7 +3,7 @@
 
 EAPI=7
 
-inherit git-r3 xdg
+inherit git-r3 xdg meson
 
 DESCRIPTION="GTK Frontend for IWD"
 HOMEPAGE="https://github.com/J-Lentz/iwgtk"
@@ -18,19 +18,13 @@ DEPEND="gui-libs/gtk
 RDEPEND="${DEPEND}"
 BDEPEND=""
 
-src_prepare() {
-	default
-	sed -i \
-		-e 's/^CC=/CC?=/' \
-		-e 's/^CFLAGS=/CFLAGS:=$(CFLAGS) /' \
-		-e 's/^LDLIBS=/LDLIBS:=$(LDFLAGS) /' \
-		-e 's/-O3$/${CFLAGS}/' \
-		-e 's/^confdir=/confdir=$(PREFIX)/' \
-		Makefile || die
-}
-
-src_install() {
-	emake PREFIX="${ED}/usr" install
-	gunzip "${ED}/usr/share/man/man1/iwgtk.1.gz" || die
-}
+#src_configure() {
+#	local emesonargs=(
+#	)
+#	meson_src_configure
+#}
+#src_install() {
+#	emake PREFIX="${ED}/usr" install
+#	gunzip "${ED}/usr/share/man/man1/iwgtk.1.gz" || die
+#}
 

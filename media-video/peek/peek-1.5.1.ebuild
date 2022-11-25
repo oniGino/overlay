@@ -13,7 +13,7 @@ SRC_URI="https://github.com/phw/peek/archive/${PV}.tar.gz -> ${P}.tar.gz"
 LICENSE="GPL-3+"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
-IUSE="keybinder test"
+IUSE="keybinder man test"
 RESTRICT="!test? ( test )"
 
 RDEPEND=">=dev-libs/glib-2.38:2
@@ -22,7 +22,7 @@ RDEPEND=">=dev-libs/glib-2.38:2
 	keybinder? ( dev-libs/keybinder:3 )"
 DEPEND="${RDEPEND}
 	$(vala_depend)
-	app-text/txt2man
+	man? ( app-text/txt2man )
 	>=sys-devel/gettext-0.19
 	virtual/pkgconfig"
 

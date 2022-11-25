@@ -16,7 +16,7 @@ IUSE="appindicator libnotify X zeroconf"
 
 RDEPEND="
 	dev-libs/glib
-	|| ( media-sound/pulseaudio-daemon[glib] <media-sound/pulseaudio-15.99.1[glib] )
+	|| ( media-libs/libpulse[glib] <media-sound/pulseaudio-15.99.1[glib] )
 	x11-libs/gtk+:3
 	appindicator? ( dev-libs/libappindicator )
 	X? ( x11-libs/libX11 )

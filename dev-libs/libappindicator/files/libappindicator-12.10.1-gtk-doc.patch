@@ -1,5 +1,27 @@
---- Makefile.am	2020-07-06 06:22:59.000000000 -0700
-+++ Makefile.am.b	2022-01-01 22:12:36.146858154 -0800
+--- a/configure.ac	2020-07-06 06:22:59.000000000 -0700
++++ b/configure.ac	2022-09-16 22:24:54.863706584 -0700
+@@ -215,10 +215,6 @@
+ bindings/vala/examples/Makefile
+ tests/Makefile
+ example/Makefile
+-docs/Makefile
+-docs/reference/Makefile
+-docs/reference/version.xml
+-docs/reference/libappindicator-docs.sgml
+ ])
+
+ if test "x$has_mono" = "xtrue" ; then
+--- a/Makefile.am	2020-07-06 06:22:59.000000000 -0700
++++ b/Makefile.am	2022-01-01 22:12:36.146858154 -0800
+@@ -3,7 +3,6 @@
+ SUBDIRS = \
+       src		\
+-	  bindings	\
++	  bindings
+-	  docs
+
+ # FIXME: Disabled, vala error
+ #	  example	
 @@ -14,14 +14,13 @@
  
  EXTRA_DIST = \
@@ -16,3 +38,12 @@
  
  dist-hook:
  	@if test -d "$(top_srcdir)/.bzr"; \
+
+--- a/autogen.sh  2020-07-06 06:22:59.000000000 -0700
++++ b/autogen.sh  2022-09-16 21:39:55.406656230 -0700
+@@ -10,4 +10,4 @@
+ gtkdocize || exit 1
+ USE_GNOME2_MACROS=1 \
+ USE_COMMON_DOC_BUILD=yes \
+-gnome-autogen.sh --enable-gtk-doc $@
++gnome-autogen.sh $@

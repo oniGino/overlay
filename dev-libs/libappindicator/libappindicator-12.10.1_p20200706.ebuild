@@ -12,7 +12,6 @@ HOMEPAGE="https://launchpad.net/libappindicator"
 MY_PV="${PV%_p*}"
 PATCH_VERSION="${PV#*_p}"
 SRC_URI="mirror://ubuntu/pool/main/liba/${PN}/${PN}_${MY_PV}+20.10.${PATCH_VERSION}.1.orig.tar.gz"
-
 LICENSE="LGPL-2.1 LGPL-3"
 SLOT="3"
 KEYWORDS="~alpha amd64 ~arm ~arm64 ~ia64 ~ppc64 ~riscv x86"
@@ -44,8 +43,8 @@ S="${WORKDIR}"
 RESTRICT="test"
 
 src_prepare() {
-	if use doc; then
-		eapply "${FILESDIR}/${PN}-${PV}-gtk-doc.patch"
+	if ! use doc; then
+		eapply "${FILESDIR}/${PN}-${MY_PV}-gtk-doc.patch"
 	fi
 	default
 	eautoreconf
