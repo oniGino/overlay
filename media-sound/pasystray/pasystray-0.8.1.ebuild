@@ -1,7 +1,7 @@
 # Copyright 1999-2021 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=7
+EAPI=8
 
 inherit autotools xdg
 
@@ -16,7 +16,10 @@ IUSE="appindicator libnotify X zeroconf"
 
 RDEPEND="
 	dev-libs/glib
-	|| ( media-libs/libpulse[glib] <media-sound/pulseaudio-15.99.1[glib] )
+	|| (
+		media-libs/libpulse[glib]
+		media-sound/pulseaudio-daemon[glib,zeroconf?]
+	)
 	x11-libs/gtk+:3
 	appindicator? ( dev-libs/libappindicator )
 	X? ( x11-libs/libX11 )

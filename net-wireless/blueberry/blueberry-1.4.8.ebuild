@@ -1,9 +1,9 @@
-# Copyright 1999-2021 Gentoo Authors
+# Copyright 1999-2023 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=7
+EAPI=8
 
-PYTHON_COMPAT=( python3_{8,9,10} )
+PYTHON_COMPAT=( python3_{9..11} )
 
 inherit gnome2-utils python-single-r1 xdg-utils
 
@@ -17,25 +17,24 @@ KEYWORDS="~amd64 ~x86"
 IUSE="+appindicator"
 REQUIRED_USE="${PYTHON_REQUIRED_USE}"
 
-RDEPEND="${PYTHON_DEPS}
+RDEPEND="
+	${PYTHON_DEPS}
 	$(python_gen_cond_dep '
 		dev-python/dbus-python[${PYTHON_USEDEP}]
 		dev-python/pygobject:3[${PYTHON_USEDEP}]
 		dev-python/setproctitle[${PYTHON_USEDEP}]
-		!appindicator? ( dev-python/xapp[${PYTHON_USEDEP}] )
+		!appindicator? ( dev-python/python3-xapp[${PYTHON_USEDEP}] )
 	')
-	=net-wireless/gnome-bluetooth-3*[introspection]
+	>=net-wireless/gnome-bluetooth-3.14:2[introspection]
 	appindicator? ( dev-libs/libappindicator )
 	net-wireless/bluez[obex]
 	net-wireless/bluez-tools
-	|| (
-		>=sys-apps/util-linux-2.31_rc1
-		net-wireless/rfkill
-	)
 	!appindicator? (
 		x11-misc/wmctrl
 		x11-libs/libnotify[introspection]
-	)"
+	)
+	>=sys-apps/util-linux-2.31_rc1
+"
 DEPEND="${RDEPEND}"
 
 src_prepare() {

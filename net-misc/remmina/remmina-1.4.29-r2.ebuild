@@ -1,9 +1,9 @@
-# Copyright 1999-2022 Gentoo Authors
+# Copyright 1999-2023 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=7
+EAPI=8
 
-PYTHON_COMPAT=( python3_{8..10} )
+PYTHON_COMPAT=( python3_{9..11} )
 
 inherit cmake optfeature python-single-r1 xdg
 
@@ -11,11 +11,11 @@ MY_P="${PN^}-v${PV}"
 
 DESCRIPTION="A GTK+ RDP, SPICE, VNC and SSH client"
 HOMEPAGE="https://remmina.org/"
-SRC_URI="https://gitlab.com/Remmina/Remmina/-/archive/v${PV}/${MY_P}.tar.gz"
+SRC_URI="https://gitlab.com/Remmina/Remmina/-/archive/v${PV}/${MY_P}.tar.bz2"
 
 LICENSE="GPL-2+-with-openssl-exception"
 SLOT="0"
-KEYWORDS="~amd64 ~arm64 ~x86"
+KEYWORDS="amd64 ~arm64 ~riscv x86"
 IUSE="+appindicator crypt cups examples gnome-keyring gvnc kwallet nls python spice ssh rdp telemetry vnc webkit X x2go zeroconf"
 
 REQUIRED_USE="python? ( ${PYTHON_REQUIRED_USE} )"
@@ -26,12 +26,11 @@ COMMON_DEPEND="
 	dev-libs/libpcre2
 	dev-libs/libsodium:=
 	dev-libs/openssl:0=
-	net-libs/libsoup:2.4
 	x11-libs/gdk-pixbuf
 	x11-libs/gtk+:3
 	X? ( x11-libs/libX11 )
 	x11-libs/libxkbfile
-	appindicator? ( dev-libs/libappindicator:3 )
+	appindicator? ( dev-libs/libayatana-appindicator )
 	crypt? ( dev-libs/libgcrypt:0= )
 	gnome-keyring? ( app-crypt/libsecret )
 	gvnc? ( net-libs/gtk-vnc )

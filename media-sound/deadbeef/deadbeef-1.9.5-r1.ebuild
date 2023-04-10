@@ -1,7 +1,7 @@
-# Copyright 2021-2022 Gentoo Authors
+# Copyright 2021-2023 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=7
+EAPI=8
 
 inherit autotools xdg flag-o-matic toolchain-funcs plocale
 
@@ -16,10 +16,10 @@ LICENSE="
 "
 SLOT="0"
 KEYWORDS="~amd64 ~riscv ~x86"
-IUSE="aac alsa cdda converter cover dts ffmpeg flac +hotkeys lastfm mp3 musepack nls notify +nullout opus oss pulseaudio sc68 shellexec +supereq threads vorbis wavpack"
+IUSE="aac alsa cdda converter cover dts ffmpeg flac +hotkeys lastfm libretro libsamplerate mp3 musepack nls notify +nullout opus oss pulseaudio pipewire sc68 shellexec +supereq threads vorbis wavpack"
 
 REQUIRED_USE="
-	|| ( alsa oss pulseaudio nullout )
+	|| ( alsa oss pulseaudio pipewire nullout )
 "
 
 DEPEND="
@@ -33,8 +33,14 @@ DEPEND="
 		media-libs/libcddb
 		dev-libs/libcdio-paranoia:=
 	)
-	cover? ( media-libs/libjpeg-turbo
-			media-libs/libpng
+	cover? (
+		|| (
+			(
+				media-libs/libjpeg-turbo
+				media-libs/libpng
+			)
+			media-libs/imlib2[jpeg,png]
+		)
 	)
 	dts? ( media-libs/libdca )
 	ffmpeg? ( media-video/ffmpeg )
@@ -42,6 +48,7 @@ DEPEND="
 		media-libs/flac:=
 		media-libs/libogg
 	)
+	libsamplerate? ( media-libs/libsamplerate )
 	mp3? ( media-sound/mpg123 )
 	musepack? ( media-sound/musepack-tools )
 	nls? ( virtual/libintl )
@@ -50,9 +57,10 @@ DEPEND="
 	)
 	opus? ( media-libs/opusfile )
 	pulseaudio? ( media-sound/pulseaudio )
+	pipewire? ( media-video/pipewire )
 	vorbis? ( media-libs/libvorbis )
 	wavpack? ( media-sound/wavpack )
-	dev-libs/libdispatch
+	dev-libs/libdispatch:=
 "
 
 RDEPEND="${DEPEND}"
@@ -65,7 +73,7 @@ BDEPEND="
 "
 
 PATCHES=(
-	"${FILESDIR}/deadbeef-use-ffmpeg-plugin-for-ape-by-default.patch"
+	"${FILESDIR}/deadbeef-1.9.2-drop-Werror.patch"
 )
 
 src_prepare() {
@@ -90,8 +98,8 @@ src_prepare() {
 	eautopoint --force
 	eautoreconf
 
-	# Get rid of bundled gettext.
-	drop_and_stub "${S}/intl"
+	# Get rid of bundled gettext. (Avoid build failures with musl)
+	use elibc_musl || drop_and_stub "${S}/intl"
 
 	# Plugins that are undesired for whatever reason, candidates for unbundling and such.
 	for i in adplug alac dumb ffap mms gme mono2stereo psf shn sid soundtouch wma; do
@@ -117,7 +125,6 @@ src_configure () {
 	tc-export CC CXX LD AR NM OBJDUMP RANLIB PKG_CONFIG
 
 	local myconf=(
-		"--disable-static"
 		"--disable-staticlink"
 		"--disable-portable"
 		"--disable-rpath"
@@ -125,7 +132,6 @@ src_configure () {
 		"--disable-libmad"
 		"--disable-gtk2"
 		"--disable-adplug"
-		"--disable-artwork-imlib2"
 		"--disable-coreaudio"
 		"--disable-dumb"
 		"--disable-alac"
@@ -139,7 +145,6 @@ src_configure () {
 		"--disable-sid"
 		"--disable-sndfile"
 		"--disable-soundtouch"
-		"--disable-src"
 		"--disable-tta"
 		"--disable-vfs-zip"
 		"--disable-vtx"
@@ -169,10 +174,13 @@ src_configure () {
 		"$(use_enable nullout)"
 		"$(use_enable opus)"
 		"$(use_enable pulseaudio pulse)"
+		"$(use_enable pipewire)"
 		"$(use_enable sc68)"
 		"$(use_enable shellexec)"
 		"$(use_enable shellexec shellexecui)"
 		"$(use_enable lastfm lfm)"
+		"$(use_enable libretro)"
+		"$(use_enable libsamplerate src)"
 		"$(use_enable wavpack)"
 
 		"--enable-gtk3"
