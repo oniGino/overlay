@@ -22,7 +22,7 @@ DEPEND="
 "
 RDEPEND="${DEPEND}"
 PDEPEND="gnome? ( x11-themes/QGnomePlatform )"
-PATCHES=( "${FILESDIR}"/${P}-xcb.patch )
+PATCHES="${FILESDIR}/${P}-xcb.patch"
 
 src_configure() {
 	local mycmakeargs=(
