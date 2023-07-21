@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<maintainer type="person">
+		<email>oniGino@protonmail.com</email>
+		<name>Gino</name>
+	</maintainer>
+	<description>Iwdgui is a graphical frontend for iwd, Intel's iNet Wireless Daemon.</description>
+	<upsteam>
+		<remote-id type="gitlab">hfernh/iwdgui</remote-id>
+		<bugs-to>https://gitlab.com/hfernh/iwdgui/-/issues</bugs-to>
+	</upstream>
+</pkgmetadata>
