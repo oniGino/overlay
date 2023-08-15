@@ -5,12 +5,12 @@ EAPI=8
 
 PVCUT=$(ver_cut 1-2)
 PLASMA_MINIMAL=5.16.5
-QTMIN=5.15.5
+QTMIN=5.15.9
 inherit ecm frameworks.kde.org
 
 DESCRIPTION="Framework for working with KDE activities"
 LICENSE="|| ( LGPL-2.1 LGPL-3 )"
-KEYWORDS="amd64 ~arm arm64 ~loong ~ppc64 ~riscv x86"
+KEYWORDS="amd64 ~arm ~arm64 ~loong ~ppc64 ~riscv x86"
 IUSE="kde"
 
 COMMON_DEPEND="

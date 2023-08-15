@@ -5,7 +5,7 @@ Subject: [PATCH] libkworkspace: Allow standalone build
 
 ---
  libkworkspace/CMakeLists.txt | 67 +++++++++++++++++++++++++++++++++++-
- 1 file changed, 66 insertions(+), 1 deletion(-)
+ 1 file changed, 67 insertions(+), 1 deletion(-)
 
 diff --git a/CMakeLists.txt b/CMakeLists.txt
 index 015c5181f..0aa635e11 100644
@@ -39,9 +39,9 @@ index 015c5181f..0aa635e11 100644
 +    include(ECMMarkAsTest)
 +    include(GenerateExportHeader)
 +
-+    find_package(KF5 ${KF5_MIN_VERSION} REQUIRED COMPONENTS Config CoreAddons I18n Init WindowSystem)
++    find_package(KF5 ${KF5_MIN_VERSION} REQUIRED COMPONENTS Config CoreAddons I18n WindowSystem)
 +
-+    find_package(KWinDBusInterface CONFIG REQUIRED)
++    find_package(KWinDBusInterface CONFIG )
 +    find_package(KScreenLocker 5.13.80 REQUIRED)
 +    find_package(ScreenSaverDBusInterface CONFIG REQUIRED)
 +

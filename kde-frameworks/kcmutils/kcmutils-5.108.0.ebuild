@@ -10,15 +10,15 @@ inherit ecm frameworks.kde.org
 
 DESCRIPTION="Framework to work with KDE System Settings modules"
 LICENSE="LGPL-2"
-KEYWORDS="~amd64 ~arm ~arm64 ~loong ~ppc64 ~riscv ~x86"
-IUSE=""
+KEYWORDS="amd64 ~arm ~arm64 ~loong ~ppc64 ~riscv x86"
+IUSE="kauth"
 
 DEPEND="
 	>=dev-qt/qtdbus-${QTMIN}:5
 	>=dev-qt/qtdeclarative-${QTMIN}:5[widgets]
 	>=dev-qt/qtgui-${QTMIN}:5
 	>=dev-qt/qtwidgets-${QTMIN}:5
-	=kde-frameworks/kauth-${PVCUT}*:5
+	kauth? ( =kde-frameworks/kauth-${PVCUT}*:5 )
 	=kde-frameworks/kconfig-${PVCUT}*:5
 	=kde-frameworks/kconfigwidgets-${PVCUT}*:5
 	=kde-frameworks/kcoreaddons-${PVCUT}*:5

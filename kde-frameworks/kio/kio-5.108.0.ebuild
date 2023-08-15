@@ -12,8 +12,8 @@ inherit ecm frameworks.kde.org xdg-utils
 DESCRIPTION="Framework providing transparent file and data management"
 
 LICENSE="LGPL-2+"
-KEYWORDS="~amd64 ~arm ~arm64 ~loong ~ppc64 ~riscv ~x86"
-IUSE="acl +handbook kerberos +kwallet X"
+KEYWORDS="amd64 ~arm ~arm64 ~loong ~ppc64 ~riscv x86"
+IUSE="acl +handbook kde kerberos +kwallet X"
 
 # tests hang
 RESTRICT="test"
@@ -62,7 +62,7 @@ DEPEND="${RDEPEND}
 	>=dev-qt/qtconcurrent-${QTMIN}:5
 	test? ( sys-libs/zlib )
 "
-PDEPEND=">=kde-frameworks/kded-${PVCUT}:5"
+PDEPEND="kde? ( >=kde-frameworks/kded-${PVCUT}:5 )"
 
 src_configure() {
 	local mycmakeargs=(
