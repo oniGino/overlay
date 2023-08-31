@@ -1,0 +1,11 @@
+--- 1/configure.ac	2023-08-30 21:27:51.149742868 -0700
++++ 2/configure.ac	2023-08-30 21:28:41.034221639 -0700
+@@ -151,7 +151,7 @@
+     [PKG_CHECK_MODULES(AYATANA_APPINDICATOR, [ $AYATANA_APPINDICATOR_VERSION ], HAVE_AYATANA_APPINDICATOR=1,
+                        HAVE_AYATANA_APPINDICATOR=0)], HAVE_AYATANA_APPINDICATOR=0)
+
+-AS_IF([test "x$enable_ayatana_appindicator" = xyes && test "x$HAVE_APPINDICATOR" = x0],
++AS_IF([test "x$enable_ayatana_appindicator" = xyes && test "x$HAVE_AYATANA_APPINDICATOR" = x0],
+     [AC_MSG_ERROR([*** libappindicator not found])])
+
+ AC_SUBST(AYATANA_APPINDICATOR_CFLAGS)

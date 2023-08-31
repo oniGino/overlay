@@ -3,11 +3,19 @@
 
 EAPI=8
 
-inherit autotools xdg
+inherit autotools xdg git-r3
 
 DESCRIPTION="PulseAudio system tray"
 HOMEPAGE="https://github.com/christophgysin/pasystray"
-SRC_URI="https://github.com/christophgysin/${PN}/archive/refs/tags/${PV}.tar.gz -> ${P}.tar.gz"
+
+if [[ ${PV} == 9999 ]]
+then
+	EGIT_REPO_URI="https://github.com/christophgysin/${PN}"
+else
+	SRC_URI="https://github.com/christophgysin/${PN}/archive/refs/tags/${PV}.tar.gz -> ${P}.tar.gz"
+fi
+
+PATCHES="${FILESDIR}/configure.patch"
 
 LICENSE="LGPL-2.1+"
 SLOT="0"
@@ -21,7 +29,7 @@ RDEPEND="
 		media-sound/pulseaudio-daemon[glib,zeroconf?]
 	)
 	x11-libs/gtk+:3
-	appindicator? ( dev-libs/libappindicator )
+	appindicator? ( dev-libs/libayatana-appindicator )
 	X? ( x11-libs/libX11 )
 	zeroconf? ( net-dns/avahi )
 	libnotify? ( x11-libs/libnotify )
@@ -38,7 +46,8 @@ src_prepare() {
 
 src_configure() {
 	econf \
-		$(use_enable appindicator appindicator) \
+		--disable-appindicator \
+		$(use_enable appindicator ayatana-appindicator) \
 		$(use_enable X x11) \
 		$(use_enable libnotify notify) \
 		$(use_enable zeroconf avahi)

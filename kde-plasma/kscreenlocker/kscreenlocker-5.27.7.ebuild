@@ -13,8 +13,8 @@ DESCRIPTION="Library and components for secure lock screen architecture"
 
 LICENSE="GPL-2" # TODO: CHECK
 SLOT="5"
-KEYWORDS="~amd64 ~arm ~arm64 ~loong ~ppc64 ~riscv ~x86"
-IUSE=""
+KEYWORDS="amd64 ~arm arm64 ~loong ~ppc64 ~riscv x86"
+IUSE="kde"
 
 RESTRICT="test"
 
@@ -54,9 +54,11 @@ DEPEND="${COMMON_DEPEND}
 	x11-base/xorg-proto
 "
 RDEPEND="${COMMON_DEPEND}
-	>=dev-qt/qtquickcontrols2-${QTMIN}:5
-	>=kde-frameworks/kirigami-${KFMIN}:5
-	>=kde-frameworks/plasma-${KFMIN}:5
+	kde? (
+		>=dev-qt/qtquickcontrols2-${QTMIN}:5
+		>=kde-frameworks/kirigami-${KFMIN}:5
+		>=kde-frameworks/plasma-${KFMIN}:5
+	)
 "
 BDEPEND="
 	dev-util/wayland-scanner

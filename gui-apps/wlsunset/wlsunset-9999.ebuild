@@ -1,9 +1,9 @@
 # Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=7
+EAPI=8
 
-inherit systemd meson autotools eutils
+inherit systemd meson autotools
 
 DESCRIPTION="Sunset RedShift Daemon"
 HOMEPAGE="https://git.sr.ht/~kennylevinsen/wlsunset"
