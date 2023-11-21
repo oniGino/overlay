@@ -20,7 +20,7 @@ DEPEND="
 	media-libs/harfbuzz
 	x11-libs/cairo
 	x11-libs/gdk-pixbuf
-	x11-libs/gtk+:3
+	x11-libs/gtk+:3[X]
 	x11-libs/pango
 "
 	#x11-apps/xcur2png

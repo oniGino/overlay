@@ -64,7 +64,7 @@ SLOT="0"
 KEYWORDS="~amd64"
 
 DEPEND="
-	x11-libs/gtk+
+	x11-libs/gtk+:3[X]
 	dev-lang/go
 	gui-libs/gtk-layer-shell
 	"

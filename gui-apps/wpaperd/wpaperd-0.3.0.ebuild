@@ -233,7 +233,7 @@ SRC_URI="
 "
 
 LICENSE="GPL-3 MIT 0BSD Apache-2.0 Apache-2.0-with-LLVM-exceptions BSD CC0-1.0 GPL-3+ ISC MIT MIT-0 MPL-2.0 Unicode-DFS-2016 Unlicense ZLIB"
-
+IUSE="avif +man"
 SLOT="0"
 KEYWORDS="~amd64"
 
@@ -241,8 +241,26 @@ DEPEND="
 	virtual/pkgconfig
 	x11-libs/libxkbcommon
 	dev-lang/rust
+	avif? ( media-libs/avif )
 "
 RDEPEND="${DEPEND}"
-BDEPEND=""
-
+BDEPEND="
+	man? ( app-text/scdoc )
+"
+DOCS="CHANGELOG.md LICENSE.md README.md"
 QA_FLAGS_IGNORED="usr/bin/${PN}"
+
+src_configure() {
+	local myfeatures=(
+		$(usev avif)
+	)
+	cargo_src_configure
+	if use man; then
+		scdoc < man/wpaperd-output.5.scd > man/wpaperd-output.5
+	fi
+}
+src_install() {
+	cargo_src_install
+	doman man/wpaperd-output.5
+	default
+}

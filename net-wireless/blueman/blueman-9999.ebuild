@@ -20,14 +20,14 @@ else
 		https://github.com/blueman-project/blueman/releases/download/${PV/_/.}/${P/_/.}.tar.xz
 	"
 	S=${WORKDIR}/${P/_/.}
-	KEYWORDS="~amd64 ~arm ~arm64 ~ppc ~ppc64 ~riscv ~x86"
+	KEYWORDS="amd64 arm arm64 ~loong ppc ppc64 ~riscv x86"
 fi
 
 # icons are GPL-2
 # source files are mixed GPL-3+ and GPL-2+
 LICENSE="GPL-3+ GPL-2"
 SLOT="0"
-IUSE="network nls policykit pulseaudio"
+IUSE="network nls policykit pulseaudio X"
 
 DEPEND="
 	$(python_gen_cond_dep '
@@ -48,7 +48,7 @@ RDEPEND="
 		dev-python/pycairo[${PYTHON_USEDEP}]
 	')
 	sys-apps/dbus
-	x11-libs/gtk+:3[introspection,X]
+	x11-libs/gtk+:3[X?,introspection]
 	x11-libs/libnotify[introspection]
 	|| (
 		x11-themes/adwaita-icon-theme

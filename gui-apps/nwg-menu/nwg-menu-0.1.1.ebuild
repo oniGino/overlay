@@ -46,13 +46,13 @@ fi
 
 go-module_set_globals
 SRC_URI+="${EGO_SUM_SRC_URI}"
-
+IUSE="X"
 LICENSE="MIT"
 SLOT="0"
 KEYWORDS="~amd64"
 
 DEPEND="
-	x11-libs/gtk+
+	x11-libs/gtk+:3[X?]
 	dev-lang/go
 	gui-libs/gtk-layer-shell
 	"
@@ -60,6 +60,7 @@ RDEPEND="${DEPEND}"
 BDEPEND=""
 
 src_compile() {
+	GOFLAGS+=" -tags=no_x11"
 	ego build
 }
 
