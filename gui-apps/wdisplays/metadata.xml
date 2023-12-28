@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<maintainer type="person">
+		<email>oniGino@protonmail.com</email>
+		<name>Gino</name>
+	</maintainer>
+	<description>graphical application for configuring displays in Wayland compositors</description>
+	<upstream>
+		<remote-id type="github">artizirk/wdisplays</remote-id>
+		<bugs-to>https://github.com/artizirk/wdisplays/-/issues</bugs-to>
+	</upstream>
+</pkgmetadata>

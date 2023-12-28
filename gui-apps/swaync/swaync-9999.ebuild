@@ -24,7 +24,7 @@ KEYWORDS=""
 IUSE="+man pulseaudio scripting systemd bash-completion fish-completion zsh-completion"
 
 DEPEND="
-	pulseaudio? ( media-sound/pulseaudio )
+	pulseaudio? ( media-libs/libpulse )
 	systemd? ( sys-apps/systemd )
 	bash-completion? ( app-shells/bash-completion )
 	fish-completion? ( app-shells/fish )

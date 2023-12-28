@@ -29,9 +29,9 @@ HOMEPAGE="https://www.libvirt.org/ https://gitlab.com/libvirt/libvirt/"
 LICENSE="LGPL-2.1"
 SLOT="0/${PV}"
 IUSE="
-	apparmor audit bash-completion +caps dtrace firewalld fuse glusterfs
+	apparmor audit bash-completion +caps docs dtrace firewalld fuse glusterfs
 	iscsi iscsi-direct +libvirtd lvm libssh libssh2 lxc nfs nls numa openvz
-	parted pcap policykit +qemu rbd sasl selinux test tpm +udev
+	parted pcap policykit +qemu rbd remote sasl selinux systemd test tpm +udev
 	virtualbox +virt-network wireshark-plugins xen zfs
 "
 RESTRICT="!test? ( test )"
@@ -41,19 +41,22 @@ REQUIRED_USE="
 	libvirtd? ( || ( lxc openvz qemu virtualbox xen ) )
 	lxc? ( caps libvirtd )
 	openvz? ( libvirtd )
-	qemu? ( libvirtd )
 	virt-network? ( libvirtd )
 	virtualbox? ( libvirtd )
-	xen? ( libvirtd )"
+	xen? ( libvirtd )
+	libvirtd? ( remote )"
 
 BDEPEND="
-	app-text/xhtml1
+	docs? ( 
+		app-text/xhtml1 
+		dev-python/docutils
+		dev-perl/XML-XPath
+	)
 	dev-lang/perl
 	dev-libs/libxslt
-	dev-perl/XML-XPath
-	dev-python/docutils
 	virtual/pkgconfig
-	net-libs/rpcsvc-proto
+	remote? (
+		net-libs/rpcsvc-proto )
 	bash-completion? ( >=app-shells/bash-completion-2.0 )
 	verify-sig? ( sec-keys/openpgp-keys-libvirt )"
 
@@ -62,14 +65,14 @@ BDEPEND="
 # We can use both libnl:1.1 and libnl:3, but if you have both installed, the
 # package will use 3 by default. Since we don't have slot pinning in an API,
 # we must go with the most recent.
+	#app-misc/scrub
 RDEPEND="
 	acct-user/qemu
-	app-misc/scrub
 	>=dev-libs/glib-2.56.0
 	dev-libs/libgcrypt
 	dev-libs/libnl:3
 	>=dev-libs/libxml2-2.9.1
-	>=net-analyzer/openbsd-netcat-1.105-r1
+	remote? ( >=net-analyzer/openbsd-netcat-1.105-r1 )
 	>=net-libs/gnutls-3.2.0:=
 	net-libs/libtirpc:=
 	>=net-misc/curl-7.18.0
@@ -289,18 +292,17 @@ src_configure() {
 		$(meson_feature wireshark-plugins wireshark_dissector)
 		$(meson_feature xen driver_libxl)
 		$(meson_feature zfs storage_zfs)
+		$(meson_feature remote driver_remote)
+
 
 		-Dnetcf=disabled
 		-Dsanlock=disabled
 		-Dopenwsman=disabled
 
-		-Ddriver_esx=enabled
-		-Dinit_script=systemd
+		-Dinit_script=$(usex systemd systemd openrc)
 		-Dqemu_user=$(usex caps qemu root)
 		-Dqemu_group=$(usex caps qemu root)
-		-Ddriver_remote=enabled
 		-Dstorage_fs=enabled
-		-Ddriver_vmware=enabled
 
 		--localstatedir="${EPREFIX}/var"
 		-Dinitconfdir="${EPREFIX}/etc/systemd"

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<maintainer type="person">
+		<email>oniGino@protonmail.com</email>
+		<name>Gino</name>
+	</maintainer>
+	<description>Video player built with Qt/QML on top of libmpv</description>
+	<upstream>
+		<bugs-to>https://invent.kde.org/multimedia/haruna"</bugs-to>
+	</upstream>
+	<flags>
+		<youtube>Youtube Extension</youtube>
+	</flags>
+</pkgmetadata>
