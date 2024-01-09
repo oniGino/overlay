@@ -5,11 +5,15 @@
 		<email>oniGino@protonmail.com</email>
 		<name>Gino</name>
 	</maintainer>
-	<description>Video player built with Qt/QML on top of libmpv</description>
+	<maintainer type="project" proxied="proxy">
+		<email>proxy-maint@gentoo.org</email>
+		<name>Proxy Maintainers</name>
+	</maintainer>
 	<upstream>
+		<remote-id type="kde-invent">multimedia/haruna</remote-id> 
 		<bugs-to>https://invent.kde.org/multimedia/haruna"</bugs-to>
 	</upstream>
-	<flags>
-		<youtube>Youtube Extension</youtube>
-	</flags>
+	<use>
+		<flag name="youtube">Youtube Streaming Support</flag>
+	</use>
 </pkgmetadata>

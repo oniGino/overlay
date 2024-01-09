@@ -17,7 +17,7 @@ HOMEPAGE="https://kdenlive.org/en/"
 LICENSE="GPL-3"
 SLOT="5"
 KEYWORDS="amd64 arm64 ~ppc64 ~riscv x86"
-IUSE="gles2-only info semantic-desktop share v4l"
+IUSE="gles2-only info semantic-desktop v4l"
 
 RESTRICT="test" # segfaults, bug 684132
 
@@ -57,21 +57,20 @@ DEPEND="
 	>=kde-frameworks/ktextwidgets-${KFMIN}:5
 	>=kde-frameworks/kwidgetsaddons-${KFMIN}:5
 	>=kde-frameworks/kxmlgui-${KFMIN}:5
+	>=kde-frameworks/purpose-${KFMIN}:5
 	>=kde-frameworks/solid-${KFMIN}:5
-	>=media-libs/mlt-7.14.0[ffmpeg,frei0r,glaxnimate,qt5,sdl,xml]
-	share? ( >=kde-frameworks/purpose-${KFMIN}:5 )
+	>=media-libs/mlt-7.14.0[ffmpeg,frei0r,sdl,qt5,xml]
 	v4l? ( media-libs/libv4l )
 "
 RDEPEND="${DEPEND}
 	>=dev-qt/qtquickcontrols-${QTMIN}:5
-	media-video/ffmpeg[encode,libass,sdl]
+	media-video/ffmpeg[encode,libass]
 	info? ( media-video/mediainfo )
 "
 BDEPEND="sys-devel/gettext"
 
 src_configure() {
 	local mycmakeargs=(
-		$(cmake_use_find_package share KF5Purpose)
 		$(cmake_use_find_package v4l LibV4L2)
 	)
 	ecm_src_configure
