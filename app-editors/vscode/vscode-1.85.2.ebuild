@@ -14,8 +14,6 @@ SRC_URI="
 "
 S="${WORKDIR}"
 
-RESTRICT="mirror strip bindist"
-
 LICENSE="
 	Apache-2.0
 	BSD
@@ -37,7 +35,8 @@ LICENSE="
 "
 SLOT="0"
 KEYWORDS="-* amd64 ~arm ~arm64"
-IUSE="kerberos X"
+IUSE="egl kerberos wayland X"
+RESTRICT="mirror strip bindist"
 
 RDEPEND="
 	>=app-accessibility/at-spi2-core-2.46.0:2
@@ -48,10 +47,6 @@ RDEPEND="
 	dev-libs/nspr
 	dev-libs/nss
 	media-libs/alsa-lib
-	X? (
-		media-libs/libcanberra[gtk3]
-		x11-libs/libXScrnSaver
-	)
 	media-libs/libglvnd
 	media-libs/mesa
 	net-misc/curl
@@ -62,7 +57,11 @@ RDEPEND="
 	x11-libs/gtk+:3
 	x11-libs/libdrm
 	x11-libs/libnotify
-	x11-libs/libX11
+	X? (
+		x11-libs/libX11
+		x11-libs/libXScrnSaver
+		media-libs/libcanberra[gtk3]
+	)
 	x11-libs/libxcb
 	x11-libs/libXcomposite
 	x11-libs/libXdamage
@@ -107,10 +106,25 @@ src_install() {
 
 	dosym -r "/opt/${PN}/bin/code" "usr/bin/vscode"
 	dosym -r "/opt/${PN}/bin/code" "usr/bin/code"
-	domenu "${FILESDIR}/vscode.desktop"
-	domenu "${FILESDIR}/vscode-url-handler.desktop"
-	domenu "${FILESDIR}/vscode-wayland.desktop"
-	domenu "${FILESDIR}/vscode-url-handler-wayland.desktop"
+
+	local EXEC_EXTRA_FLAGS=()
+	if use wayland; then
+		EXEC_EXTRA_FLAGS+=( "--ozone-platform-hint=auto" )
+	fi
+	if use egl; then
+		EXEC_EXTRA_FLAGS+=( "--use-gl=egl" )
+	fi
+
+	sed "s|@exec_extra_flags@|${EXEC_EXTRA_FLAGS[*]}|g" \
+		"${FILESDIR}/vscode-url-handler.desktop" \
+		> "${T}/vscode-url-handler.desktop" || die
+
+	sed "s|@exec_extra_flags@|${EXEC_EXTRA_FLAGS[*]}|g" \
+		"${FILESDIR}/vscode.desktop" \
+		> "${T}/vscode.desktop" || die
+
+	domenu "${T}/vscode.desktop"
+	domenu "${T}/vscode-url-handler.desktop"
 	newicon "resources/app/resources/linux/code.png" "vscode.png"
 }
 
