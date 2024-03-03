@@ -1,0 +1,10 @@
+--- dolphin-24.02.0/CMakeLists.txt	2024-02-20 18:59:53.000000000 -0800
++++ CMakeLists.txt	2024-02-29 13:36:58.776544828 -0800
+@@ -29,6 +29,7 @@
+ include(ECMDeprecationSettings)
+ include(CheckIncludeFiles)
+ include(CheckLibraryExists)
++include(CheckFunctionExists)
+ 
+ ecm_setup_version(${RELEASE_SERVICE_VERSION} VARIABLE_PREFIX DOLPHIN
+                   VERSION_HEADER "${CMAKE_CURRENT_BINARY_DIR}/src/dolphin_version.h"

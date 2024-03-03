@@ -1,0 +1,34 @@
+--- a/CMakeLists.txt	2024-02-21 07:43:33.000000000 -0800
++++ b/CMakeLists.txt	2024-02-29 19:42:20.264506533 -0800
+@@ -35,6 +35,8 @@
+   Crash
+ )
+ 
++option(HAVE_X11 "Build X11 support" TRUE)
++
+ include(CheckIncludeFile)
+ include(CheckSymbolExists)
+ check_include_file("sys/prctl.h" HAVE_SYS_PRCTL_H)
+--- a/policykitlistener.cpp	2024-02-21 07:43:33.000000000 -0800
++++ b/policykitlistener.cpp	2024-02-29 19:40:06.141525843 -0800
+@@ -12,7 +12,9 @@
+ 
+ #include <KLocalizedString>
+ #include <KWindowSystem>
++#if HAVE_X11
+ #include <KX11Extras>
++#endif
+ 
+ #include <PolkitQt1/ActionDescription>
+ #include <PolkitQt1/Agent/Session>
+@@ -125,8 +127,10 @@
+         if (!activationToken.isEmpty()) {
+             handleWaylandActivation(actionId, activationToken);
+         }
++#if HAVE_X11
+     } else if (KWindowSystem::isPlatformX11()) {
+         KX11Extras::forceActiveWindow(m_dialog->windowHandle()->winId());
++#endif
+     }
+ 
+     if (identities.length() == 1) {

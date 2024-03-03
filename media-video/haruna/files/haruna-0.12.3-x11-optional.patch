@@ -1,0 +1,12 @@
+--- haruna-0.12.3/src/application.cpp	2023-11-15 10:44:52.000000000 -0800
++++ application.cpp	2024-02-29 19:17:01.148886851 -0800
+@@ -50,7 +50,9 @@
+ #include <KFileItem>
+ #include <KFileMetaData/Properties>
+ #include <KLocalizedString>
++#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+ #include <KStartupInfo>
++#endif
+ #include <KWindowConfig>
+ #include <KWindowSystem>
+ 

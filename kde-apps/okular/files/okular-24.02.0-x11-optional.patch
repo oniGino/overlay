@@ -1,0 +1,53 @@
+--- a/CMakeLists.txt	2024-02-21 00:29:37.000000000 -0800
++++ b/CMakeLists.txt	2024-02-29 16:10:23.512080955 -0800
+@@ -200,9 +200,9 @@
+         URL "https://invent.kde.org/plasma/plasma-activities"
+         PURPOSE "Required for Activities integration."
+     )
+-    set(HAVE_X11 TRUE)
++    option(HAVE_X11 "Build X11 support" TRUE)
+ else()
+-    set(HAVE_X11 FALSE)
++    option(HAVE_X11 "Build X11 support" FALSE)
+ endif()
+ find_package(Phonon4Qt6 CONFIG)
+ set_okular_optional_package_properties(Phonon4Qt6 PROPERTIES
+--- a/shell/shell.cpp	2024-02-21 00:29:37.000000000 -0800
++++ b/shell.cpp	2024-02-29 16:33:18.626561520 -0800
+@@ -29,9 +29,11 @@
+ #include <KSharedConfig>
+ #include <KStandardAction>
+ #ifndef Q_OS_WIN
++#if HAVE_X11
+ #include <KStartupInfo>
+ #include <KWindowInfo>
+ #endif
++#endif
+ #include <KToggleFullScreenAction>
+ #include <KToolBar>
+ #include <KUrlMimeData>
+@@ -429,7 +431,7 @@
+         return false;
+     }
+ 
+-#ifndef Q_OS_WIN
++#if HAVE_X11
+     const KWindowInfo winfo(window()->effectiveWinId(), NET::WMDesktop);
+     if (winfo.desktop() != desktop) {
+         return false;
+@@ -706,11 +708,11 @@
+ void Shell::tryRaise(const QString &startupId)
+ {
+ #ifndef Q_OS_WIN
+-    if (KWindowSystem::isPlatformWayland()) {
+-        KWindowSystem::setCurrentXdgActivationToken(startupId);
+-    } else if (KWindowSystem::isPlatformX11()) {
++#if HAVE_X11
+         KStartupInfo::setNewStartupId(window()->windowHandle(), startupId.toUtf8());
+-    }
++#else
++        KWindowSystem::setCurrentXdgActivationToken(startupId);
++#endif
+ #else
+     Q_UNUSED(startupId);
+ #endif

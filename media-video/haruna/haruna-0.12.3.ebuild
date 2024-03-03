@@ -17,31 +17,27 @@ SLOT="0"
 IUSE="youtube"
 
 RDEPEND="
-	>=dev-qt/qtconcurrent-${QTMIN}:5
-	>=dev-qt/qtdbus-${QTMIN}:5
-	>=dev-qt/qtdeclarative-${QTMIN}:5
-	>=dev-qt/qtgui-${QTMIN}:5
-	>=dev-qt/qtquickcontrols2-${QTMIN}:5
-	>=dev-qt/qtquickcontrols-${QTMIN}:5
-	>=dev-qt/qtx11extras-${QTMIN}:5
-	>=dev-qt/qtxml-${QTMIN}:5
-	>=kde-frameworks/breeze-icons-${KFMIN}:5
-	>=kde-frameworks/kconfig-${KFMIN}:5
-	>=kde-frameworks/kcoreaddons-${KFMIN}:5
-	>=kde-frameworks/kfilemetadata-${KFMIN}:5
-	>=kde-frameworks/ki18n-${KFMIN}:5
-	>=kde-frameworks/kiconthemes-${KFMIN}:5
-	>=kde-frameworks/kio-${KFMIN}:5
-	>=kde-frameworks/kirigami-${KFMIN}:5
-	>=kde-frameworks/qqc2-desktop-style-${KFMIN}:5
+	>=dev-qt/qtbase-${QTMIN}:6[concurrent,dbus,gui,widgets,xml]
+	>=kde-frameworks/breeze-icons-${KFMIN}:6
+	>=kde-frameworks/kconfig-${KFMIN}:6
+	>=kde-frameworks/kcoreaddons-${KFMIN}:6
+	>=kde-frameworks/kfilemetadata-${KFMIN}:6
+	>=kde-frameworks/ki18n-${KFMIN}:6
+	>=kde-frameworks/kiconthemes-${KFMIN}:6
+	>=kde-frameworks/kio-${KFMIN}:6
+	>=kde-frameworks/kirigami-${KFMIN}:6
+	>=kde-frameworks/qqc2-desktop-style-${KFMIN}:6
 	media-video/mpv[libmpv]
 	youtube? ( net-misc/yt-dlp )"
 DEPEND="${RDEPEND}"
 BDEPEND="
 	sys-devel/gettext"
 
+PATCHES=( "${FILESDIR}/${P}-x11-optional.patch" )
+
 src_configure() {
 	local mycmakeargs=(
+		-DQT_MAJOR_VERSION=6
 		$(cmake_use_find_package youtube Ytdlp)
 	)
 	ecm_src_configure

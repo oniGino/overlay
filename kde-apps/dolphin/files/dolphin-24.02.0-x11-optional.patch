@@ -1,0 +1,11 @@
+--- dolphin-24.02.0/CMakeLists.txt	2024-02-20 18:59:53.000000000 -0800
++++ CMakeLists.txt	2024-02-29 14:03:03.622236858 -0800
+@@ -53,7 +53,7 @@
+ )
+ 
+ if (UNIX AND NOT APPLE)
+-    set(HAVE_X11 TRUE)
++  option(HAVE_X11 "Build X11 support" TRUE)
+ endif()
+ 
+ find_package(KF6 ${KF6_MIN_VERSION} REQUIRED COMPONENTS

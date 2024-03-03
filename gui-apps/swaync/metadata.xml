@@ -6,7 +6,8 @@
 		<name>Gino M</name>
 	</maintainer>
 	<use>
-		<flag name="scripting">Enable Scripting</flag>
+    <flag name="scripting">Enable Scripting</flag>
+    <flag name="fish-completion">Enable fish-completion support</flag>
 	</use>
 	<upstream>
 		<remote-id type="github">ErikReider/SwayNotificationCenter</remote-id>

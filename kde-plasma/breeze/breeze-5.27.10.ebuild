@@ -1,4 +1,4 @@
-# Copyright 1999-2023 Gentoo Authors
+# Copyright 1999-2024 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
@@ -30,15 +30,15 @@ RDEPEND="
 	>=kde-frameworks/kguiaddons-${KFMIN}:5
 	>=kde-frameworks/ki18n-${KFMIN}:5
 	>=kde-frameworks/kiconthemes-${KFMIN}:5
+	>=kde-frameworks/kirigami-${KFMIN}:5
 	>=kde-frameworks/kwidgetsaddons-${KFMIN}:5
 	>=kde-frameworks/kwindowsystem-${KFMIN}:5
-	>=kde-frameworks/kirigami-${KFMIN}:5
 	kwin? ( >=kde-plasma/kdecoration-${PVCUT}:5 )
 "
 DEPEND="${RDEPEND}"
 BDEPEND=">=kde-frameworks/kcmutils-${KFMIN}:5"
 PDEPEND="
-	>=kde-frameworks/breeze-icons-${KFMIN}:5
+	>=kde-frameworks/breeze-icons-${KFMIN}:*
 	tools? ( >=kde-plasma/kde-cli-tools-${PVCUT}:5 )
 "
 

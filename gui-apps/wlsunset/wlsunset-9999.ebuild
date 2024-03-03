@@ -23,7 +23,7 @@ IUSE="+man"
 DEPEND="dev-libs/wayland"
 RDEPEND="${DEPEND}"
 BDEPEND="
-	dev-util/ninja
+	dev-build/ninja
 	man? ( app-text/scdoc )
 "
 
