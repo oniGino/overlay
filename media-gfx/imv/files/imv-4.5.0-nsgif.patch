@@ -1,0 +1,344 @@
+Authentication-Results: mail-a.sr.ht; dkim=pass header.d=kz6wk9.com header.i=@kz6wk9.com
+Received: from out-175.mta1.migadu.com (out-175.mta1.migadu.com [95.215.58.175])
+	by mail-a.sr.ht (Postfix) with ESMTPS id 7EFDD203F3
+	for <~exec64/imv-devel@lists.sr.ht>; Fri,  1 Mar 2024 21:20:07 +0000 (UTC)
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kz6wk9.com; s=key1;
+	t=1709328006;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=aDzCWsBabFS8WFD8GAeA++yMfH1LksPSaVmcR9PWRss=;
+	b=wSHh2aG6kjGS6iFcMUsIGvEDVlHY6S9ESmL/SXUoGCl6pS180dCvc1vwUNTXSPZ8woYDXT
+	SOjVQrq1O+ctlLWTM457pApAwL1R9c9vuz9Y+RjqvLl4q7i3UOOx17xbMSY6iJ0bQztRbh
+	rwQerRc5zvmvqBB11fZYI502sAYIwCTCd18+Tx2eyn9PLblqVBmxWk4V9vSB/loqvwfwnx
+	jhBL8rMPU5+JePHL1KvJj5kFS+Nxga1mb9Bcqyqzf852Z+LH5iLbouoXCFRW962oynWpa8
+	nxd9dB5UtTXaLWG5Q0ldElOq6jPoB7wgSQ7tNo/eEpojPtAcMDqXbwtB5mMLtg==
+From: Fabio Henrique <dev@kz6wk9.com>
+To: ~exec64/imv-devel@lists.sr.ht
+Cc: Fabio Henrique <dev@kz6wk9.com>
+Subject: [PATCH imv] add libnsgif 1.0.0 support
+Date: Fri,  1 Mar 2024 21:17:19 +0000
+Message-ID: <20240301211856.8170-1-dev@kz6wk9.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
+
+---
+ meson.build            |   2 +-
+ src/backend_libnsgif.c | 183 +++++++++++++++++++++++------------------
+ 2 files changed, 105 insertions(+), 80 deletions(-)
+
+diff --git a/meson.build b/meson.build
+index ea3a653..69127f8 100644
+--- a/meson.build
++++ b/meson.build
+@@ -125,7 +125,7 @@ foreach backend : [
+   ['libpng', 'dependency', 'libpng', []],
+   ['libjpeg', 'dependency', 'libturbojpeg', []],
+   ['librsvg', 'dependency', 'librsvg-2.0', '>= 2.44'],
+-  ['libnsgif', 'dependency', 'libnsgif', '< 1.0.0'],
++  ['libnsgif', 'dependency', 'libnsgif', '>= 1.0.0'],
+   ['libheif', 'dependency', 'libheif', []],
+   ['libjxl', 'dependency', 'libjxl', []],
+ ]
+diff --git a/src/backend_libnsgif.c b/src/backend_libnsgif.c
+index 5c5995b..5b78af1 100644
+--- a/src/backend_libnsgif.c
++++ b/src/backend_libnsgif.c
+@@ -6,59 +6,63 @@
+ #include "source_private.h"
+ 
+ #include <fcntl.h>
+-#include <libnsgif.h>
++#include <inttypes.h>
++#include <nsgif.h>
+ #include <stdlib.h>
+ #include <string.h>
+ #include <sys/mman.h>
+ #include <unistd.h>
+ 
+ struct private {
+-  int current_frame;
+-  gif_animation gif;
++  nsgif_t *gif;
++  const nsgif_info_t *gif_info;
++  nsgif_bitmap_t *bmp;
+   void *data;
++  int owns_data;
+   size_t len;
++  uint32_t current_frame;
+ };
+ 
+-static void* bitmap_create(int width, int height)
++static nsgif_bitmap_t* bitmap_create(int width, int height)
+ {
+   const size_t bytes_per_pixel = 4;
+   return calloc(width * height, bytes_per_pixel);
+ }
+ 
+-static void bitmap_destroy(void *bitmap)
++static void bitmap_destroy(nsgif_bitmap_t *bitmap)
+ {
+   free(bitmap);
+ }
+ 
+-static unsigned char* bitmap_get_buffer(void *bitmap)
++static uint8_t* bitmap_get_buffer(nsgif_bitmap_t *bitmap)
+ {
+   return bitmap;
+ }
+ 
+-static void bitmap_set_opaque(void *bitmap, bool opaque)
++static void bitmap_set_opaque(nsgif_bitmap_t *bitmap, bool opaque)
+ {
+   (void)bitmap;
+   (void)opaque;
+ }
+ 
+-static bool bitmap_test_opaque(void *bitmap)
++static bool bitmap_test_opaque(nsgif_bitmap_t *bitmap)
+ {
+   (void)bitmap;
+   return false;
+ }
+ 
+-static void bitmap_mark_modified(void *bitmap)
++static void bitmap_mark_modified(nsgif_bitmap_t *bitmap)
+ {
+   (void)bitmap;
+ }
+ 
+-static gif_bitmap_callback_vt bitmap_callbacks = {
+-  bitmap_create,
+-  bitmap_destroy,
+-  bitmap_get_buffer,
+-  bitmap_set_opaque,
+-  bitmap_test_opaque,
+-  bitmap_mark_modified
++static nsgif_bitmap_cb_vt bitmap_callbacks = {
++  .create = bitmap_create,
++  .destroy = bitmap_destroy,
++  .get_buffer = bitmap_get_buffer,
++  .set_opaque = bitmap_set_opaque,
++  .test_opaque = bitmap_test_opaque,
++  .modified = bitmap_mark_modified
+ };
+ 
+ 
+@@ -69,24 +73,36 @@ static void free_private(void *raw_private)
+   }
+ 
+   struct private *private = raw_private;
+-  gif_finalise(&private->gif);
+-  munmap(private->data, private->len);
++  nsgif_destroy(private->gif);
++  if (private->owns_data && private->data)
++    munmap(private->data, private->len);
+   free(private);
+ }
+ 
+-static void push_current_image(struct private *private,
+-    struct imv_image **image, int *frametime)
++static void push_current_image(struct private *private, struct imv_image **image, int *frametime)
+ {
++  nsgif_error err = nsgif_frame_decode(private->gif, private->current_frame, &private->bmp);
++  if (err != NSGIF_OK) {
++    imv_log(IMV_DEBUG, "libnsgif: failed to decode #%"PRIu32" frame: '%s'\n", private->current_frame,
++        nsgif_strerror(err));
++    return;
++  }
++  const nsgif_frame_info_t *gif_frame_info = nsgif_get_frame_info(private->gif, private->current_frame);
++  if (!gif_frame_info) {
++    imv_log(IMV_ERROR, "libnsgif: failed to get #%"PRIu32" frame info\n", private->current_frame);
++    return;
++  }
++
+   struct imv_bitmap *bmp = malloc(sizeof *bmp);
+-  bmp->width = private->gif.width;
+-  bmp->height = private->gif.height;
++  bmp->width = private->gif_info->width;
++  bmp->height = private->gif_info->height;
+   bmp->format = IMV_ABGR;
+   size_t len = 4 * bmp->width * bmp->height;
+   bmp->data = malloc(len);
+-  memcpy(bmp->data, private->gif.frame_image, len);
++  memcpy(bmp->data, private->bmp, len);
+ 
+   *image = imv_image_create_from_bitmap(bmp);
+-  *frametime = private->gif.frames[private->current_frame].frame_delay * 10.0;
++  *frametime = gif_frame_info->delay * 10.0;
+ }
+ 
+ static void first_frame(void *raw_private, struct imv_image **image, int *frametime)
+@@ -97,12 +113,6 @@ static void first_frame(void *raw_private, struct imv_image **image, int *framet
+   struct private *private = raw_private;
+   private->current_frame = 0;
+ 
+-  gif_result code = gif_decode_frame(&private->gif, private->current_frame);
+-  if (code != GIF_OK) {
+-    imv_log(IMV_DEBUG, "libnsgif: failed to decode first frame\n");
+-    return;
+-  }
+-
+   push_current_image(private, image, frametime);
+ }
+ 
+@@ -114,13 +124,7 @@ static void next_frame(void *raw_private, struct imv_image **image, int *frameti
+   struct private *private = raw_private;
+ 
+   private->current_frame++;
+-  private->current_frame %= private->gif.frame_count;
+-
+-  gif_result code = gif_decode_frame(&private->gif, private->current_frame);
+-  if (code != GIF_OK) {
+-    imv_log(IMV_DEBUG, "libnsgif: failed to decode a frame\n");
+-    return;
+-  }
++  private->current_frame %= private->gif_info->frame_count;
+ 
+   push_current_image(private, image, frametime);
+ }
+@@ -131,72 +135,92 @@ static const struct imv_source_vtable vtable = {
+   .free = free_private
+ };
+ 
+-static enum backend_result open_memory(void *data, size_t len, struct imv_source **src)
++static enum backend_result backend_gif_create(void *data, size_t len, struct imv_source **src, int owns)
+ {
+   struct private *private = calloc(1, sizeof *private);
+-  gif_create(&private->gif, &bitmap_callbacks);
+-
+-  gif_result code;
+-  do {
+-    code = gif_initialise(&private->gif, len, data);
+-  } while (code == GIF_WORKING);
+-
+-  if (code != GIF_OK) {
+-    gif_finalise(&private->gif);
+-    free(private);
+-    imv_log(IMV_DEBUG, "libsngif: unsupported file\n");
+-    return BACKEND_UNSUPPORTED;
++  private->gif = NULL;
++  private->data = data;
++  private->len = len;
++  private->owns_data = owns;
++
++  enum backend_result ret = BACKEND_SUCCESS;
++
++  nsgif_error err = nsgif_create(&bitmap_callbacks, NSGIF_BITMAP_FMT_ABGR8888, &private->gif);
++  if (err != NSGIF_OK) {
++    imv_log(IMV_ERROR, "libnsgif: failed to create gif: '%s'\n", nsgif_strerror(err));
++    ret = BACKEND_UNSUPPORTED;
++    goto end;
+   }
+ 
++  err = nsgif_data_scan(private->gif, private->len, private->data);
++  if (err != NSGIF_OK) {
++    imv_log(IMV_DEBUG, "libnsgif: gif data scan failed: '%s'\n", nsgif_strerror(err));
++    ret = BACKEND_UNSUPPORTED;
++    goto end;
++  }
++
++  nsgif_data_complete(private->gif);
++
++  private->gif_info = nsgif_get_info(private->gif);
++  if (!private->gif_info) {
++    imv_log(IMV_ERROR, "libnsgif: failed to get gif info\n");
++    ret = BACKEND_UNSUPPORTED;
++    goto end;
++  }
++
++  imv_log(IMV_DEBUG, "libnsgif: num_frames=%"PRIu32"\n", private->gif_info->frame_count);
++  imv_log(IMV_DEBUG, "libnsgif: width=%"PRIu32"\n", private->gif_info->width);
++  imv_log(IMV_DEBUG, "libnsgif: height=%"PRIu32"\n", private->gif_info->height);
++
+   *src = imv_source_create(&vtable, private);
+-  return BACKEND_SUCCESS;
++end:
++  if (ret != BACKEND_SUCCESS)
++    if (private) {
++      if (private->gif)
++        nsgif_destroy(private->gif);
++      free(private);
++    }
++  return ret;
++}
++
++static enum backend_result open_memory(void *data, size_t len, struct imv_source **src)
++{
++  return backend_gif_create(data, len, src, 0);
+ }
+ 
+ static enum backend_result open_path(const char *path, struct imv_source **src)
+ {
+   imv_log(IMV_DEBUG, "libnsgif: open_path(%s)\n", path);
+ 
++  enum backend_result ret = BACKEND_SUCCESS;
++
+   int fd = open(path, O_RDONLY);
+   if (fd < 0) {
+-    return BACKEND_BAD_PATH;
++    ret = BACKEND_BAD_PATH;
++    goto end;
+   }
+ 
+   off_t len = lseek(fd, 0, SEEK_END);
+   if (len < 0) {
+-    close(fd);
+-    return BACKEND_BAD_PATH;
++    ret = BACKEND_BAD_PATH;
++    goto end;
+   }
+ 
+   void *data = mmap(NULL, len, PROT_READ, MAP_PRIVATE, fd, 0);
+-  close(fd);
+   if (data == MAP_FAILED || !data) {
+-    return BACKEND_BAD_PATH;
++    ret = BACKEND_BAD_PATH;
++    goto end;
+   }
+ 
+-  struct private *private = calloc(1, sizeof *private);
+-  private->data = data;
+-  private->len = len;
+-  gif_create(&private->gif, &bitmap_callbacks);
+-
+-  gif_result code;
+-  do {
+-    code = gif_initialise(&private->gif, private->len, private->data);
+-  } while (code == GIF_WORKING);
+-
+-  if (code != GIF_OK) {
+-    gif_finalise(&private->gif);
+-    munmap(private->data, private->len);
+-    free(private);
+-    imv_log(IMV_DEBUG, "libsngif: unsupported file\n");
+-    return BACKEND_UNSUPPORTED;
+-  }
+-
+-  imv_log(IMV_DEBUG, "libnsgif: num_frames=%d\n", private->gif.frame_count);
+-  imv_log(IMV_DEBUG, "libnsgif: width=%d\n", private->gif.width);
+-  imv_log(IMV_DEBUG, "libnsgif: height=%d\n", private->gif.height);
++  ret = backend_gif_create(data, len, src, 1);
++  if (ret != BACKEND_SUCCESS)
++    if (data)
++      munmap(data, len);
++end:
++  if (fd >= 0)
++    close(fd);
+ 
+-  *src = imv_source_create(&vtable, private);
+-  return BACKEND_SUCCESS;
++  return ret;
+ }
+ 
+ 
+@@ -208,3 +232,4 @@ const struct imv_backend imv_backend_libnsgif = {
+   .open_path = &open_path,
+   .open_memory = &open_memory,
+ };
++/* vim:set ts=2 sts=2 sw=2 et: */
+-- 
+2.44.0
+

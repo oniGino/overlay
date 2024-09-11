@@ -4,7 +4,7 @@
 EAPI=8
 
 DISTUTILS_USE_PEP517=setuptools
-PYTHON_COMPAT=( python3_{10,11} )
+PYTHON_COMPAT=( python3_{10,12} )
 inherit distutils-r1 xdg
 
 DESCRIPTION="A graphical frontend for iwd, Intel's iNet Wireless Daemon"

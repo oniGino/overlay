@@ -1,0 +1,14 @@
+--- a/src/mpvrenderer.cpp	2024-07-29 06:39:10.000000000 -0700
++++ b/src/mpvrenderer.cpp	2024-08-30 23:45:38.939314095 -0700
+@@ -72,11 +72,6 @@
+ 
+         mpv_render_param display{MPV_RENDER_PARAM_INVALID, nullptr};
+ #if defined(Q_OS_UNIX) && !defined(Q_OS_DARWIN) && !defined(Q_OS_ANDROID) && !defined(Q_OS_HAIKU)
+-        if (QGuiApplication::platformName() == QStringLiteral("xcb")) {
+-            display.type = MPV_RENDER_PARAM_X11_DISPLAY;
+-            display.data = qGuiApp->nativeInterface<QNativeInterface::QX11Application>()->display();
+-        }
+-
+         if (QGuiApplication::platformName() == QStringLiteral("wayland")) {
+             display.type = MPV_RENDER_PARAM_WL_DISPLAY;
+             display.data = qGuiApp->nativeInterface<QNativeInterface::QWaylandApplication>()->display();

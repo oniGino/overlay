@@ -19,19 +19,18 @@ HOMEPAGE="https://www.hjdskes.nl/projects/cage/ https://github.com/Hjdskes/cage"
 LICENSE="MIT"
 SLOT="0"
 
-IUSE="+man X"
+IUSE="+man"
 
 RDEPEND="
 	>=dev-libs/wayland-protocols-1.14
-	>=gui-libs/wlroots-0.17[X?]
+	>=gui-libs/wlroots-0.18
 	dev-libs/wayland
 	sys-libs/glibc
-	x11-libs/libxkbcommon[X?]
+	x11-libs/libxkbcommon
 	man? ( app-text/scdoc )
 "
 DEPEND="${RDEPEND}"
 
 src_configure() {
-	meson_src_configure $(meson_feature X xwayland)
 	meson_src_configure $(meson_feature man man-pages)
 }

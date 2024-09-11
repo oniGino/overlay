@@ -25,7 +25,6 @@ DEPEND="
 		sys-apps/systemd
 		sys-auth/elogind
 		)
-	x11-libs/libnotify
 "
 RDEPEND="${DEPEND}"
 BDEPEND="
