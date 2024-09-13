@@ -5,8 +5,8 @@ EAPI=8
 
 ECM_HANDBOOK="forceoptional"
 ECM_TEST="true"
-KFMIN=6.3.0
-QTMIN=6.6.2
+KFMIN=6.5.0
+QTMIN=6.7.2
 inherit ecm gear.kde.org
 
 DESCRIPTION="KIO plugins present a filesystem-like view of arbitrary data"
@@ -14,7 +14,7 @@ HOMEPAGE="https://invent.kde.org/network/kio-extras"
 
 LICENSE="GPL-2" # TODO: CHECK
 SLOT="6"
-KEYWORDS="~amd64"
+KEYWORDS="~amd64 ~arm64 ~ppc64 ~riscv ~x86"
 IUSE="activities +kde ios +man mtp openexr phonon samba +sftp thumbnails taglib X"
 
 # requires running Plasma environment
@@ -54,10 +54,10 @@ DEPEND="
 	)
 	mtp? ( >=media-libs/libmtp-1.1.16:= )
 	openexr? ( media-libs/openexr:= )
-	phonon? ( >=media-libs/phonon-4.12.0[qt6] )
+	phonon? ( >=media-libs/phonon-4.12.0[qt6(+)] )
 	samba? (
 		net-fs/samba[client]
-		>=net-libs/kdsoap-2.2.0:=[qt6]
+		>=net-libs/kdsoap-2.2.0:=[qt6(+)]
 		>=net-libs/kdsoap-ws-discovery-client-0.3.0
 	)
 	sftp? ( net-libs/libssh:=[sftp] )
@@ -69,8 +69,9 @@ DEPEND="
 "
 RDEPEND="${DEPEND}
 	!kde-apps/kio-extras:5[-kf6compat(-)]
-	!kde-apps/kio-extras-kf5:5[-kf6compat]
-	!kde-frameworks/kio:5[-kf6compat(-)]
+	!kde-apps/kio-extras-kf5:5
+	!<kde-frameworks/kio-5.116.0-r2:5
+	!kde-frameworks/kio-trash-desktop-file:5
 	kde? ( >=kde-frameworks/kded-${KFMIN}:6 )
 "
 BDEPEND="man? ( dev-util/gperf )"

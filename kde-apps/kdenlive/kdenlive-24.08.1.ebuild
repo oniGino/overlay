@@ -7,8 +7,8 @@ ECM_DESIGNERPLUGIN="true"
 ECM_HANDBOOK="optional"
 ECM_QTHELP="true"
 ECM_TEST="true"
-KFMIN=6.3.0
-QTMIN=6.6.2
+KFMIN=6.5.0
+QTMIN=6.7.2
 inherit ecm gear.kde.org optfeature
 
 DESCRIPTION="Non-linear video editing suite by KDE"
@@ -16,7 +16,7 @@ HOMEPAGE="https://kdenlive.org/en/"
 
 LICENSE="GPL-3"
 SLOT="6"
-KEYWORDS="~amd64"
+KEYWORDS="~amd64 ~arm64 ~ppc64 ~riscv ~x86"
 IUSE="gles2-only info semantic-desktop v4l X"
 
 RESTRICT="test" # segfaults, bug 684132
@@ -61,6 +61,7 @@ RDEPEND="${DEPEND}
 	info? ( media-video/mediainfo )
 "
 BDEPEND="sys-devel/gettext"
+DEPEND+=" virtual/os-headers"
 
 src_configure() {
 	local mycmakeargs=(
