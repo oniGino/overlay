@@ -10,11 +10,13 @@ SLOT="5"
 KEYWORDS="amd64 ~arm64 ~x86"
 
 RDEPEND="
+	app-admin/pass
+	app-misc/khal
+	app-misc/khard
 	dev-python/vdirsyncer
 	mail-client/neomutt
 	net-mail/isync
-	app-misc/khal
-	app-misc/khard
 	mail-mta/msmtp
+	app-admin/pass
 "
 

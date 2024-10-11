@@ -8,19 +8,19 @@ EAPI=8
 CRATES="
 	addr2line@0.21.0
 	adler@1.0.2
-	aho-corasick@1.1.1
-	anyhow@1.0.75
+	aho-corasick@1.1.2
+	anyhow@1.0.79
 	autocfg@1.1.0
 	backtrace@0.3.69
 	bitflags@1.3.2
-	bitflags@2.4.0
+	bitflags@2.4.2
 	block@0.1.6
 	bluer@0.16.1
 	bytes@1.5.0
-	cairo-rs@0.18.2
+	cairo-rs@0.18.5
 	cairo-sys-rs@0.18.2
 	cc@1.0.83
-	cfg-expr@0.15.5
+	cfg-expr@0.15.7
 	cfg-if@1.0.0
 	custom_debug@0.5.1
 	custom_debug_derive@0.5.1
@@ -30,124 +30,129 @@ CRATES="
 	displaydoc@0.2.4
 	equivalent@1.0.1
 	field-offset@0.3.6
-	futures@0.3.28
-	futures-channel@0.3.28
-	futures-core@0.3.28
-	futures-executor@0.3.28
-	futures-io@0.3.28
-	futures-macro@0.3.28
-	futures-sink@0.3.28
-	futures-task@0.3.28
-	futures-util@0.3.28
-	gdk-pixbuf@0.18.0
+	futures@0.3.30
+	futures-channel@0.3.30
+	futures-core@0.3.30
+	futures-executor@0.3.30
+	futures-io@0.3.30
+	futures-macro@0.3.30
+	futures-sink@0.3.30
+	futures-task@0.3.30
+	futures-util@0.3.30
+	gdk-pixbuf@0.18.5
 	gdk-pixbuf-sys@0.18.0
-	gdk4@0.7.2
+	gdk4@0.7.3
 	gdk4-sys@0.7.2
-	getrandom@0.2.10
+	getrandom@0.2.12
 	gettext-rs@0.7.0
 	gettext-sys@0.21.3
-	gimli@0.28.0
-	gio@0.18.2
+	gimli@0.28.1
+	gio@0.18.4
 	gio-sys@0.18.1
-	glib@0.18.2
-	glib-macros@0.18.2
+	glib@0.18.5
+	glib-macros@0.18.5
 	glib-sys@0.18.1
 	gobject-sys@0.18.0
 	graphene-rs@0.18.1
 	graphene-sys@0.18.1
-	gsk4@0.7.2
-	gsk4-sys@0.7.2
-	gtk4@0.7.2
+	gsk4@0.7.3
+	gsk4-sys@0.7.3
+	gtk4@0.7.3
 	gtk4-macros@0.7.2
-	gtk4-sys@0.7.2
-	hashbrown@0.14.0
+	gtk4-sys@0.7.3
+	hashbrown@0.14.3
 	heck@0.4.1
-	hermit-abi@0.3.3
+	hermit-abi@0.3.5
 	hex@0.4.3
-	indexmap@2.0.0
-	itoa@1.0.9
+	indexmap@2.2.2
+	itoa@1.0.10
 	lazy_static@1.4.0
 	libadwaita@0.5.3
 	libadwaita-sys@0.5.3
-	libc@0.2.148
+	libc@0.2.153
 	libdbus-sys@0.2.5
+	libpulse-binding@2.28.1
+	libpulse-sys@1.21.0
 	locale_config@0.3.0
-	lock_api@0.4.10
+	lock_api@0.4.11
 	log@0.4.20
 	macaddr@1.0.1
 	malloc_buf@0.0.6
-	memchr@2.6.3
+	memchr@2.7.1
 	memoffset@0.9.0
-	miniz_oxide@0.7.1
-	mio@0.8.8
+	miniz_oxide@0.7.2
+	mio@0.8.10
 	nix@0.27.1
-	num-derive@0.4.1
-	num-traits@0.2.17
+	num-derive@0.3.3
+	num-derive@0.4.2
+	num-traits@0.2.18
 	num_cpus@1.16.0
 	objc@0.2.7
 	objc-foundation@0.1.1
 	objc_id@0.1.1
-	object@0.32.1
-	once_cell@1.18.0
-	pango@0.18.0
+	object@0.32.2
+	once_cell@1.19.0
+	pango@0.18.3
 	pango-sys@0.18.0
 	parking_lot@0.12.1
-	parking_lot_core@0.9.8
+	parking_lot_core@0.9.9
 	phf@0.11.2
 	phf_generator@0.11.2
 	phf_macros@0.11.2
 	phf_shared@0.11.2
-	pin-project@1.1.3
-	pin-project-internal@1.1.3
+	pin-project@1.1.4
+	pin-project-internal@1.1.4
 	pin-project-lite@0.2.13
 	pin-utils@0.1.0
-	pkg-config@0.3.27
+	pkg-config@0.3.29
 	proc-macro-crate@1.3.1
+	proc-macro-crate@2.0.2
 	proc-macro-error@1.0.4
 	proc-macro-error-attr@1.0.4
-	proc-macro2@1.0.67
-	quote@1.0.33
+	proc-macro2@1.0.78
+	quote@1.0.35
 	rand@0.8.5
 	rand_core@0.6.4
-	redox_syscall@0.3.5
-	regex@1.9.5
-	regex-automata@0.3.8
-	regex-syntax@0.7.5
+	redox_syscall@0.4.1
+	regex@1.10.3
+	regex-automata@0.4.5
+	regex-syntax@0.8.2
 	rustc-demangle@0.1.23
 	rustc_version@0.4.0
 	rustversion@1.0.14
-	ryu@1.0.15
+	ryu@1.0.16
 	scopeguard@1.2.0
-	semver@1.0.19
-	serde@1.0.188
-	serde_derive@1.0.188
-	serde_json@1.0.107
-	serde_spanned@0.6.3
+	semver@1.0.21
+	serde@1.0.196
+	serde_derive@1.0.196
+	serde_json@1.0.113
+	serde_spanned@0.6.5
 	signal-hook-registry@1.4.1
 	siphasher@0.3.11
 	slab@0.4.9
-	smallvec@1.11.1
-	socket2@0.5.4
+	smallvec@1.13.1
+	socket2@0.5.5
 	strum@0.25.0
-	strum_macros@0.25.2
+	strum_macros@0.25.3
 	syn@1.0.109
-	syn@2.0.37
+	syn@2.0.48
 	synstructure@0.12.6
-	system-deps@6.1.1
-	target-lexicon@0.12.11
-	temp-dir@0.1.11
-	thiserror@1.0.48
-	thiserror-impl@1.0.48
-	tokio@1.32.0
-	tokio-macros@2.1.0
+	system-deps@6.2.0
+	target-lexicon@0.12.13
+	temp-dir@0.1.12
+	thiserror@1.0.56
+	thiserror-impl@1.0.56
+	tokio@1.36.0
+	tokio-macros@2.2.0
 	tokio-stream@0.1.14
-	tokio-util@0.7.9
-	toml@0.7.8
+	tokio-util@0.7.10
+	toml@0.8.2
 	toml_datetime@0.6.3
 	toml_edit@0.19.15
+	toml_edit@0.20.2
 	unicode-ident@1.0.12
 	unicode-xid@0.2.4
-	uuid@1.5.0
+	uuid@1.7.0
 	version-compare@0.1.1
 	version_check@0.9.4
 	wasi@0.11.0+wasi-snapshot-preview1
@@ -163,7 +168,7 @@ CRATES="
 	windows_x86_64_gnu@0.48.5
 	windows_x86_64_gnullvm@0.48.5
 	windows_x86_64_msvc@0.48.5
-	winnow@0.5.15
+	winnow@0.5.39
 "
 
 inherit meson cargo gnome2-utils
@@ -174,7 +179,7 @@ SRC_URI="
 "
 
 KEYWORDS="~amd64"
-LICENSE="GPL-3"
+LICENSE="GPL-3 0BSD Apache-2.0 Apache-2.0-with-LLVM-exceptions BSD-2 Boost-1.0 MIT Unicode-DFS-2016 Unlicense ZLIB"
 SLOT="0"
 
 DESCRIPTION="A Bluetooth and Obex client that is straight to the point, DE/WM agnostic"
