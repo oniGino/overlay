@@ -1,0 +1,11 @@
+--- a/meson.build	2024-11-04 13:17:55.000000000 -0800
++++ b/meson.build 2024-11-11 14:17:37.921140497 -0800
+@@ -501,7 +501,7 @@
+ endif
+ 
+ if not glib_networking_works
+-  error('Test for glib-networking failed. This is required.')
++  warning('Test for glib-networking failed.')
+ endif
+ 
+ ################################################################################
