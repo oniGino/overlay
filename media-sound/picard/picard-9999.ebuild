@@ -30,7 +30,7 @@ RDEPEND="
 	$(python_gen_cond_dep '
 		dev-python/charset-normalizer[${PYTHON_USEDEP}]
 		dev-python/pyjwt[${PYTHON_USEDEP}]
-		dev-python/PyQt6[gui,network,widgets,${PYTHON_USEDEP}]
+		dev-python/pyqt6[gui,network,widgets,${PYTHON_USEDEP}]
 		dev-python/python-dateutil[${PYTHON_USEDEP}]
 		dev-python/pyyaml[${PYTHON_USEDEP}]
 		media-libs/mutagen[${PYTHON_USEDEP}]

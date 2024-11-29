@@ -49,7 +49,7 @@ RDEPEND="
 	)
 	qt6? (
 		>=dev-python/pillow-8.4.0[${PYTHON_USEDEP}]
-		dev-python/PyQt6[gui,qml,quick,${PYTHON_USEDEP}]
+		dev-python/pyqt6[gui,qml,quick,${PYTHON_USEDEP}]
 		dev-qt/qtmultimedia:6[qml]
 	)
 	ncurses? ( $(python_gen_impl_dep 'ncurses') )
