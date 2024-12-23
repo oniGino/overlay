@@ -40,7 +40,7 @@ RDEPEND="
 
 distutils_enable_tests pytest
 
-DOCS=( AUTHORS.md NEWS.md README.md TRANSLATORS.md )
+DOCS=( AUTHORS.md NEWS.md README.md )
 
 src_prepare() {
 	default

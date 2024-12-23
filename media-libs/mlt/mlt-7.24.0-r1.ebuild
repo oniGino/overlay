@@ -13,7 +13,7 @@ SRC_URI="https://github.com/mltframework/${PN}/releases/download/v${PV}/${P}.tar
 LICENSE="GPL-3"
 SLOT="0/7"
 KEYWORDS="amd64 arm64 ~ppc64 ~riscv x86 ~amd64-linux ~x86-linux"
-IUSE="debug ffmpeg frei0r gtk jack libsamplerate opencv opengl python qt5 qt6 rtaudio rubberband sdl test vdpau vidstab xine xml"
+IUSE="debug ffmpeg frei0r gtk jack libsamplerate opencv opengl python qt5 qt6 rtaudio rubberband sdl test vdpau vidstab X xine xml"
 
 REQUIRED_USE="python? ( ${PYTHON_REQUIRED_USE} )"
 
@@ -46,28 +46,28 @@ DEPEND="
 	python? ( ${PYTHON_DEPS} )
 	qt5? (
 		dev-qt/qtcore:5
-		dev-qt/qtgui:5
+		dev-qt/qtgui:5[X?]
 		dev-qt/qtnetwork:5
 		dev-qt/qtsvg:5
 		dev-qt/qtwidgets:5
 		dev-qt/qtxml:5
 		media-libs/libexif
-		x11-libs/libX11
+		X? ( x11-libs/libX11 )
 	)
 	qt6? (
 		dev-qt/qt5compat:6
-		dev-qt/qtbase:6[gui,network,opengl,widgets,xml]
+		dev-qt/qtbase:6[gui,network,opengl,widgets,xml,X?]
 		dev-qt/qtsvg:6
 		media-libs/libexif
-		x11-libs/libX11
+		X? ( x11-libs/libX11 )
 	)
 	rtaudio? (
 		>=media-libs/rtaudio-4.1.2
 		kernel_linux? ( media-libs/alsa-lib )
 	)
-	rubberband? ( media-libs/rubberband )
+	rubberband? ( media-libs/rubberband:= )
 	sdl? (
-		media-libs/libsdl2[opengl,video]
+		media-libs/libsdl2[X?,opengl,video]
 		media-libs/sdl2-image
 	)
 	vidstab? ( media-libs/vidstab )
@@ -129,9 +129,9 @@ src_configure() {
 		-DMOD_JACKRACK=$(usex jack)
 		-DMOD_RESAMPLE=$(usex libsamplerate)
 		-DMOD_OPENCV=$(usex opencv)
+		-DMOD_SPATIALAUDIO=OFF # TODO: package libspatialaudio
 		-DMOD_MOVIT=$(usex opengl)
 		-DMOD_QT=$(usex qt5)
-		-DMOD_SPATIALAUDIO=OFF # TODO: package libspatialaudio
 		-DMOD_GLAXNIMATE=$(usex qt5)
 		-DMOD_QT6=$(usex qt6)
 		-DMOD_GLAXNIMATE_QT6=$(usex qt6)
