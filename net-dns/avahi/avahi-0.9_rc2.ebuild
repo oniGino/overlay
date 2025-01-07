@@ -1,25 +1,25 @@
-# Copyright 1999-2023 Gentoo Authors
+# Copyright 1999-2025 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI="7"
+EAPI=8
 
-PYTHON_COMPAT=( python3_{9..11} )
+PYTHON_COMPAT=( python3_{9..12} )
 PYTHON_REQ_USE="gdbm"
-inherit autotools flag-o-matic multilib-minimal mono-env python-single-r1 systemd
+inherit autotools multilib-minimal python-single-r1 systemd
 
 DESCRIPTION="System which facilitates service discovery on a local network"
 HOMEPAGE="https://avahi.org/"
-SRC_URI="https://github.com/lathiat/avahi/archive/v${PV}.tar.gz -> ${P}.tar.gz"
+SRC_URI="https://github.com/lathiat/avahi/archive/v${PV/_/-}.tar.gz -> ${P}.tar.gz"
+S="${WORKDIR}/${PN}-${PV/_/-}"
 
 LICENSE="LGPL-2.1"
 SLOT="0"
-KEYWORDS="~alpha amd64 arm arm64 hppa ~ia64 ~loong ~mips ppc ppc64 ~riscv ~s390 sparc x86"
-IUSE="autoipd bookmarks +dbus doc gdbm glib gtk howl-compat +introspection ipv6 mdnsresponder-compat man mono nls python qt5 selinux systemd test"
+KEYWORDS="~alpha amd64 arm arm64 ~hppa ~loong ~mips ppc ppc64 ~riscv ~s390 sparc x86"
+IUSE="autoipd bookmarks +dbus doc gdbm glib gtk howl-compat +introspection ipv6 man mdnsresponder-compat nls python qt5 selinux systemd test"
 
 REQUIRED_USE="
 	python? ( dbus gdbm ${PYTHON_REQUIRED_USE} )
 	bookmarks? ( python )
-	mono? ( dbus )
 	howl-compat? ( dbus )
 	mdnsresponder-compat? ( dbus )
 	systemd? ( dbus )
@@ -38,7 +38,7 @@ DEPEND="
 	dbus? ( sys-apps/dbus[${MULTILIB_USEDEP}] )
 	kernel_linux? ( sys-libs/libcap )
 	introspection? ( dev-libs/gobject-introspection:= )
-	mono? ( dev-lang/mono )
+	systemd? ( sys-apps/systemd:=[${MULTILIB_USEDEP}] )
 	python? (
 		${PYTHON_DEPS}
 		$(python_gen_cond_dep '
@@ -60,9 +60,9 @@ RDEPEND="
 	selinux? ( sec-policy/selinux-avahi )
 "
 BDEPEND="
-	dev-util/glib-utils
-	doc? ( app-doc/doxygen )
-	man? ( app-doc/xmltoman )
+	glib? ( dev-util/glib-utils )
+	doc? ( app-text/doxygen )
+	man? ( app-text/xmltoman )
 	sys-devel/gettext
 	virtual/pkgconfig
 "
@@ -70,23 +70,10 @@ BDEPEND="
 MULTILIB_WRAPPED_HEADERS=( /usr/include/avahi-qt5/qt-watch.h )
 
 PATCHES=(
-	"${FILESDIR}/${P}-disable-avahi-ui-sharp.patch" # bug 769062
-	"${FILESDIR}/${P}-dependency-error.patch"
-	"${FILESDIR}/${P}-null-pointer-crash.patch"
-	"${FILESDIR}/${P}-potentially-undefined-fix.patch"
-	"${FILESDIR}/${P}-strict-prototypes.patch"
-# These patches do not apply cleanly but may need to be re-instated.
-# I'll leave them commented out for now.
-#	"${FILESDIR}/${PN}-0.7-qt5.patch"
-#	"${FILESDIR}/${PN}-0.7-CVE-2017-6519.patch"
-#	"${FILESDIR}/${PN}-0.7-remove-empty-avahi_discover.patch"
-#	"${FILESDIR}/${PN}-0.7-python3.patch"
-#	"${FILESDIR}/${PN}-0.7-python3-unittest.patch"
-#	"${FILESDIR}/${PN}-0.7-python3-gdbm.patch"
+	"${FILESDIR}/avahi-0.9_rc1-disable-avahi-ui-sharp.patch" # bug 769062
 )
 
 pkg_setup() {
-	use mono && mono-env_pkg_setup
 	use python && python-single-r1_pkg_setup
 }
 
@@ -112,28 +99,30 @@ src_prepare() {
 multilib_src_configure() {
 	local myconf=(
 		--disable-gtk
+		--disable-mono
 		--disable-monodoc
 		--disable-python-dbus
 		--disable-qt3
 		--disable-qt4
 		--disable-static
-		--localstatedir="${EPREFIX}/var"
-		--with-distro=gentoo
-		--with-systemdsystemunitdir="$(systemd_get_systemunitdir)"
-		$(use_enable introspection gobject)
-		$(use_enable dbus)
-		$(use_enable gdbm)
-		$(use_enable glib)
-		$(use_enable gtk gtk3)
-		$(use_enable howl-compat compat-howl)
 		$(use_enable man manpages)
 		$(use_enable man xmltoman)
+		$(use_enable glib)
+		$(use_enable introspection gobject)
+		--localstatedir="${EPREFIX}/var"
+		--runstatedir="${EPREFIX}/run"
+		--with-distro=gentoo
+		--with-systemdsystemunitdir="$(systemd_get_systemunitdir)"
+		$(use_enable dbus)
+		$(use_enable gdbm)
+		$(use_enable gtk gtk3)
+		$(use_enable howl-compat compat-howl)
 		$(use_enable mdnsresponder-compat compat-libdns_sd)
 		$(use_enable nls)
+		$(use_enable systemd libsystemd)
 		$(multilib_native_use_enable autoipd)
 		$(multilib_native_use_enable doc doxygen-doc)
 		$(multilib_native_use_enable introspection)
-		$(multilib_native_use_enable mono)
 		$(multilib_native_use_enable python)
 		$(multilib_native_use_enable test tests)
 	)
@@ -143,10 +132,6 @@ multilib_src_configure() {
 			$(multilib_native_use_enable dbus python-dbus)
 			$(multilib_native_use_enable introspection pygobject)
 		)
-	fi
-
-	if use mono; then
-		myconf+=( $(multilib_native_use_enable doc monodoc) )
 	fi
 
 	if ! multilib_is_native_abi; then
