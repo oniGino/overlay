@@ -5,14 +5,13 @@ EAPI=8
 
 ECM_QTHELP="false"
 ECM_TEST="forceoptional"
-PVCUT=$(ver_cut 1-2)
-QTMIN=6.6.2
+QTMIN=6.7.2
 inherit ecm frameworks.kde.org optfeature xdg-utils
 
 DESCRIPTION="Library for providing abstractions to get the developer's purposes fulfilled"
 
 LICENSE="LGPL-2.1+"
-KEYWORDS="amd64 ~arm64 ~ppc64 ~riscv ~x86"
+KEYWORDS="~amd64 ~arm64 ~ppc64 ~riscv ~x86"
 IUSE="bluetooth webengine qrcode"
 
 # requires running environment
@@ -21,25 +20,25 @@ RESTRICT="test"
 DEPEND="
 	>=dev-qt/qtbase-${QTMIN}:6[dbus,gui,network,widgets]
 	>=dev-qt/qtdeclarative-${QTMIN}:6
-	=kde-frameworks/kconfig-${PVCUT}*:6
-	=kde-frameworks/kcoreaddons-${PVCUT}*:6
-	=kde-frameworks/ki18n-${PVCUT}*:6
-	=kde-frameworks/kio-${PVCUT}*:6
-	=kde-frameworks/kirigami-${PVCUT}*:6
-	=kde-frameworks/knotifications-${PVCUT}*:6
-	=kde-frameworks/kservice-${PVCUT}*:6
-	qrcode? ( =kde-frameworks/prison-${PVCUT}*:6 )
+	=kde-frameworks/kconfig-${KDE_CATV}*:6
+	=kde-frameworks/kcoreaddons-${KDE_CATV}*:6
+	=kde-frameworks/ki18n-${KDE_CATV}*:6
+	=kde-frameworks/kio-${KDE_CATV}*:6
+	=kde-frameworks/kirigami-${KDE_CATV}*:6
+	=kde-frameworks/knotifications-${KDE_CATV}*:6
+	=kde-frameworks/kservice-${KDE_CATV}*:6
+	qrcode? ( =kde-frameworks/prison-${KDE_CATV}*:6 )
 	webengine? (
 		kde-apps/kaccounts-integration:6
-		>=net-libs/accounts-qt-1.16_p20220803[qt6]
+		>=net-libs/accounts-qt-1.17[qt6(+)]
 	)
 "
 RDEPEND="${DEPEND}
-	>=kde-frameworks/kdeclarative-${PVCUT}:6
-	bluetooth? ( =kde-frameworks/bluez-qt-${PVCUT}*:6 )
+	>=kde-frameworks/kdeclarative-${KDE_CATV}:6
+	bluetooth? ( =kde-frameworks/bluez-qt-${KDE_CATV}*:6 )
 	webengine? (
-		>=kde-frameworks/purpose-kaccounts-services-${PVCUT}
-		>=net-libs/accounts-qml-0.7_p20231028[qt6]
+		>=kde-frameworks/purpose-kaccounts-services-${KDE_CATV}
+		>=net-libs/accounts-qml-0.7_p20231028[qt6(+)]
 	)
 "
 BDEPEND="webengine? ( dev-util/intltool )"
