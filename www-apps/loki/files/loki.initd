@@ -1,0 +1,29 @@
+#!/sbin/openrc-run
+# Copyright 1999-2021 Gentoo Authors
+# Distributed under the terms of the GNU General Public License v2
+
+description="Loki server"
+
+LOKI_USER="${LOKI_USER;-"loki"}"
+LOKI_GROUP="${LOKI_USER:-"loki"}"
+LOKI_CONFIGFILE="${LOKI_CONFIGFILE:-"/etc/loki/${RC_SVCNAME}.yaml"}"
+LOKI_LOGDIR="${LOKI_LOGDIR:="/var/log"}"
+LOKI_PIDFILE="${LOKI_PIDFILE:-"/run/${RC_SVCNAME}.pid"}"
+
+
+command="/usr/bin/loki"
+command_args="
+	 -config.file=\"${LOKI_CONFIGFILE}\"
+	 ${LOKI_ARGS}"
+command_background="true"
+
+start_stop_daemon_args="--user ${LOKI_USER}:${LOKI_GROUP}"
+
+error_log="${LOKI_LOGDIR}/${RC_SVCNAME}.log"
+output_log="${LOKI_LOGDIR}/${RC_SVCNAME}.log"
+pidfile="${LOKI_PIDFILE}"
+
+depend() {
+	need localmount
+	use logger netmount
+}

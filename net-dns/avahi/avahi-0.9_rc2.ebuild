@@ -3,7 +3,7 @@
 
 EAPI=8
 
-PYTHON_COMPAT=( python3_{9..12} )
+PYTHON_COMPAT=( python3_{9..13} )
 PYTHON_REQ_USE="gdbm"
 inherit autotools multilib-minimal python-single-r1 systemd
 
@@ -14,8 +14,8 @@ S="${WORKDIR}/${PN}-${PV/_/-}"
 
 LICENSE="LGPL-2.1"
 SLOT="0"
-KEYWORDS="~alpha amd64 arm arm64 ~hppa ~loong ~mips ppc ppc64 ~riscv ~s390 sparc x86"
-IUSE="autoipd bookmarks +dbus doc gdbm glib gtk howl-compat +introspection ipv6 man mdnsresponder-compat nls python qt5 selinux systemd test"
+KEYWORDS="~alpha amd64 arm arm64 hppa ~loong ~mips ppc ppc64 ~riscv ~s390 sparc x86"
+IUSE="autoipd bookmarks +dbus doc +glib gdbm gtk howl-compat +introspection ipv6 mdnsresponder-compat +man nls python qt5 selinux systemd test"
 
 REQUIRED_USE="
 	python? ( dbus gdbm ${PYTHON_REQUIRED_USE} )
@@ -105,19 +105,19 @@ multilib_src_configure() {
 		--disable-qt3
 		--disable-qt4
 		--disable-static
-		$(use_enable man manpages)
-		$(use_enable man xmltoman)
-		$(use_enable glib)
-		$(use_enable introspection gobject)
 		--localstatedir="${EPREFIX}/var"
 		--runstatedir="${EPREFIX}/run"
 		--with-distro=gentoo
 		--with-systemdsystemunitdir="$(systemd_get_systemunitdir)"
 		$(use_enable dbus)
+		$(use_enable glib)
 		$(use_enable gdbm)
 		$(use_enable gtk gtk3)
 		$(use_enable howl-compat compat-howl)
+		$(use_enable introspection gobject)
 		$(use_enable mdnsresponder-compat compat-libdns_sd)
+		$(use_enable man manpages)
+		$(use_enable man xmltoman)
 		$(use_enable nls)
 		$(use_enable systemd libsystemd)
 		$(multilib_native_use_enable autoipd)
