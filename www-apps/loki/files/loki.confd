@@ -1,0 +1,17 @@
+# Config file for /etc/init.d/loki
+
+# The user to run your application as
+#LOKI_USER=loki
+
+# The group to run your application as
+#LOKI_GROUP=loki
+
+# Configuration file
+#LOKI_CONFIGFILE="/etc/loki/${RC_SVCNAME}.ini"
+
+# PID file
+#LOKI_PIDFILE="/run/${RC_SVCNAME}.pid"
+
+# The loki datadir
+#LOKI_DATADIR=/var/lib/loki
+

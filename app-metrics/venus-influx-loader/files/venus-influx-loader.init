@@ -1,0 +1,30 @@
+#!/sbin/openrc-run
+# Copyright 1999-2025 Gentoo Authors
+# Distributed under the terms of the GNU General Public License v2
+
+description="Venus InfluxDB Loader Agent"
+
+VENUS_USER="${VENUS_USER:-"venus"}"
+VENUS_GROUP="${VENUS_GROUP:-"venus"}"
+VENUS_PORT="${VENUS_PORT:-"8088"}"
+VENUS_LOGDIR="${VENUS_LOGDIR:-"/var/log"}"
+VENUS_PIDFILE="${VENUS_PIDFILE:-"/run/${RC_SVCNAME}.pid"}"
+VENUS_CONFIG_DIR="${VENUS_CONFIG_DIR:-"/var/lib/${RC_SVCNAME}"}"
+
+command="node /usr/bin/venus-influx-loader.js"
+command_args="
+	--config-path ${VENUS_CONFIG_DIR}
+	--port ${VENUS_PORT}"
+command_background="true"
+
+start_stop_daemon_args="--user ${VENUS_USER}:${VENUS_GROUP}"
+
+error_log="${VENUS_LOGDIR}/${RC_SVCNAME}.log"
+output_log="${VENUS_LOGDIR}/${RC_SVCNAME}.log"
+pidfile="${VENUS_PIDFILE}"
+
+depend() {
+	need localmount
+	use logger netmount
+}
+

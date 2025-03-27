@@ -1,0 +1,22 @@
+#!/sbin/openrc-run
+# Copyright 1999-2021 Gentoo Authors
+# Distributed under the terms of the GNU General Public License v2
+
+description="promtail server"
+
+command="/usr/bin/promtail"
+
+command_args="
+	 -config.file=/etc/loki/promtail.yaml
+	 ${promtail_args}"
+command_background="true"
+
+error_log=/var/log/${RC_SVCNAME}.log
+output_log=/var/log/${RC_SVCNAME}.log
+pidfile=/run/${RC_SVCNAME}.pid
+
+
+depend() {
+	need localmount
+	use logger netmount
+}
