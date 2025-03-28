@@ -15,30 +15,23 @@ fi
 
 LICENSE="LGPL-2.1+ || ( LGPL-2.1 LGPL-3 )"
 SLOT="0"
-IUSE="debug qt5 +qt6"
-REQUIRED_USE="|| ( qt5 qt6 )"
+IUSE="debug"
 
 DEPEND="
-	>=media-libs/phonon-4.12.0[qt5=,qt6=,minimal]
+	>=media-libs/phonon-4.12.0[minimal]
 	media-video/mpv:=[vorbis(+)]
-	qt5? (
-		dev-qt/qtcore:5
-		dev-qt/qtgui:5
-		dev-qt/qtwidgets:5
-	)
-	qt6? ( dev-qt/qtbase:6[gui,widgets] )
+	dev-qt/qtbase:6[gui,widgets]
 "
 RDEPEND="${DEPEND}"
 BDEPEND="
 	dev-libs/libpcre2:*
 	>=kde-frameworks/extra-cmake-modules-6.5.0:*
 	virtual/pkgconfig
-	qt5? ( dev-qt/linguist-tools:5 )
-	qt6? ( dev-qt/qttools:6[linguist] )
+	dev-qt/qttools:6[linguist]
 "
 
 pkg_setup() {
-	MULTIBUILD_VARIANTS=( $(usev qt5) $(usev qt6) )
+	MULTIBUILD_VARIANTS=( "qt6" )
 }
 
 src_configure() {
@@ -50,13 +43,8 @@ src_configure() {
 			-DPHONON_BUILD_${MULTIBUILD_VARIANT^^}=ON
 			-DKDE_INSTALL_USE_QT_SYS_PATHS=ON # ecm.eclass
 			-DKDE_INSTALL_DOCBUNDLEDIR="${EPREFIX}/usr/share/help" # ecm.eclass
+			-DPHONON_BUILD_QT5=OFF
 		)
-
-		if [[ ${MULTIBUILD_VARIANT} == qt6 ]]; then
-			mycmakeargs+=( -DPHONON_BUILD_QT5=OFF )
-		else
-			mycmakeargs+=( -DPHONON_BUILD_QT6=OFF )
-		fi
 
 		cmake_src_configure
 	}
