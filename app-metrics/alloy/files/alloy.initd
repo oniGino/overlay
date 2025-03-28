@@ -1,0 +1,15 @@
+#!/sbin/openrc-run
+# Copyright 2023 Gentoo authors
+# Distributed under the terms of the GNU General Public License v2
+
+description="Grafana Alloy"
+
+command="/usr/bin/alloy"
+command_background="true"
+error_log="/var/log/alloy.log"
+output_log="/var/log/alloy.log"
+pidfile=${pidfile:-"/run/alloy.pid"}
+
+depend() {
+	after net
+}

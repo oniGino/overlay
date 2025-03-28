@@ -3,12 +3,12 @@
 
 EAPI=8
 
-inherit go-module go-env systemd
+inherit go-module go-env
 
 DESCRIPTION="Grafana Alloy"
 HOMEPAGE="https://github.com/grafana/alloy"
 SRC_URI="https://github.com/grafana/alloy/archive/refs/tags/v${PV}.tar.gz -> ${P}.tar.gz
-	https://github.com/oniGino/overlay/${P}-deps.tar.xz"
+	https://github.com/oniGino/gentoo-deps/${P}-deps.tar.xz"
 
 RESTRICT="mirror"
 LICENSE="Apache-2.0"
@@ -16,7 +16,7 @@ SLOT="0"
 KEYWORDS="~amd64 ~arm64"
 
 src_compile() {
-	ego build -o build/alloy
+	ego build alloy -o build/alloy
 }
 
 src_install() {

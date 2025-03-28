@@ -1,9 +1,0 @@
---- 1/cmd/starlink_exporter/main.go	2021-07-26 11:18:12.000000000 -0700
-+++ 2/amd/starlink_exporter/main.go	2025-02-28 00:38:42.122558989 -0800
-@@ -57,5 +57,5 @@
- 	})
- 
- 	http.Handle(metricsPath, promhttp.HandlerFor(r, promhttp.HandlerOpts{}))
--	log.Fatal(http.ListenAndServe(":"+*port, nil))
-+	log.Fatal(http.ListenAndServe("127.0.0.1:"+*port, nil))
- }
