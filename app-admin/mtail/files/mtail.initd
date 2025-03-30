@@ -1,0 +1,23 @@
+#!/sbin/openrc-run
+# Copyright 2016-2022 Gentoo Authors
+# Distributed under the terms of the GNU General Public License v2
+
+description="Google mtail Metrics"
+pidfile=${pidfile:-"/run/${RC_SVCNAME}.pid"}
+user=${user:-${RC_SVCNAME}}
+group=${group:-${RC_SVCNAME}}
+
+command="/usr/bin/mtail"
+command_args="--address 127.0.0.1 ${mtail_options}"
+command_background="true"
+command_user="${user}:${group}"
+output_log="/var/log/${RC_SVCNAME}.log"
+error_log="/var/log/${RC_SVCNAME}.log"
+
+depend() {
+	after net
+}
+
+start_pre() {
+	checkpath -q -f -o ${user}:${group} ${output_log}
+}
