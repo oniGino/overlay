@@ -3,7 +3,7 @@
 
 EAPI=8
 
-PYTHON_COMPAT=( python3_{9..12} )
+PYTHON_COMPAT=( python3_{9..13} )
 inherit gnome.org meson-multilib python-any-r1
 
 DESCRIPTION="C++ interface for pango"
