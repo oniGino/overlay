@@ -14,6 +14,7 @@
 		<name>Proxy Maintainers</name>
 	</maintainer>
 	<use>
+		<flag name="cava">Enable cava audio visualizer support</flag>
 		<flag name="experimental">Enable experimental features, such as Bluetooth battery reporting</flag>
 		<flag name="evdev">Enable libevdev support for evdev related features</flag>
 		<flag name="libinput">Enable libinput support for libinput related features</flag>
