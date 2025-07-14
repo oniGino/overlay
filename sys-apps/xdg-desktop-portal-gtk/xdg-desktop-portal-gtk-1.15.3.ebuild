@@ -32,6 +32,9 @@ DEPEND="
 	wallpaper? (
 		gnome-base/gnome-desktop
 	)
+	lockdown? (
+		gnome-base/gsettings-desktop-schemas
+	)
 	sys-apps/dbus
 	>=sys-apps/xdg-desktop-portal-1.14.0
 	x11-libs/cairo[X?]
