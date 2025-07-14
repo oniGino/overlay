@@ -1,19 +1,18 @@
-# Copyright 1999-2024 Gentoo Authors
+# Copyright 1999-2025 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
 
 ECM_TEST="forceoptional"
-KFMIN=6.6.0
-PVCUT=$(ver_cut 1-3)
-QTMIN=6.7.2
-inherit ecm plasma.kde.org
+KFMIN=6.14.0
+QTMIN=6.8.1
+inherit ecm plasma.kde.org xdg
 
 DESCRIPTION="Backend implementation for xdg-desktop-portal that is using Qt/KDE Frameworks"
 
 LICENSE="LGPL-2+"
 SLOT="6"
-KEYWORDS="~amd64 ~arm64 ~ppc64 ~riscv ~x86"
+KEYWORDS="~amd64 ~arm64 ~loong ~ppc64 ~riscv ~x86"
 IUSE="plasma"
 
 # dev-qt/qtbase:= slot op: Uses Qt::GuiPrivate for qtx11extras_p.h
@@ -42,12 +41,12 @@ COMMON_DEPEND="
 	>=kde-frameworks/kstatusnotifieritem-${KFMIN}:6
 	>=kde-frameworks/kwidgetsaddons-${KFMIN}:6
 	>=kde-frameworks/kwindowsystem-${KFMIN}:6
-	>=kde-plasma/kwayland-${PVCUT}:6
-	plasma? ( >=kde-plasma/plasma-workspace-${PVCUT}:6 )
+	>=kde-plasma/kwayland-${KDE_CATV}:6
+	plasma? ( >=kde-plasma/plasma-workspace-${KDE_CATV}:6 )
 	x11-libs/libxkbcommon
 "
 DEPEND="${COMMON_DEPEND}
-	>=dev-libs/plasma-wayland-protocols-1.14.0
+	>=dev-libs/plasma-wayland-protocols-1.18.0
 	>=dev-libs/wayland-protocols-1.25
 	>=dev-qt/qtbase-${QTMIN}:6[concurrent]
 "

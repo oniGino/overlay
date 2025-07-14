@@ -4,7 +4,7 @@
 EAPI=8
 
 KDE_ORG_NAME="${PN}-1"
-KFMIN=6.10.0
+KFMIN=6.14.0
 QTMIN=6.8.1
 inherit ecm plasma.kde.org xdg
 
@@ -23,6 +23,7 @@ DEPEND="
 	>=kde-frameworks/kcrash-${KFMIN}:6
 	>=kde-frameworks/kdbusaddons-${KFMIN}:6
 	>=kde-frameworks/ki18n-${KFMIN}:6
+	>=kde-frameworks/knotifications-${KFMIN}:6
 	>=kde-frameworks/kwindowsystem-${KFMIN}:6[X?]
 	>=sys-auth/polkit-qt-0.175[qt6(+)]
 "
