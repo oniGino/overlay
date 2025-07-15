@@ -27,7 +27,7 @@ DEPEND="
 	dev-libs/glib:2
 	dev-libs/gobject-introspection
 	gui-libs/gtk:4[wayland,introspection]
-	gui-libs/gtk-layer-shell:4
+	gui-libs/gtk4-layer-shell[introspection]
 	gui-libs/libadwaita
 	>=dev-libs/wayland-1.23.0
 	>=dev-libs/libgee-0.20.6

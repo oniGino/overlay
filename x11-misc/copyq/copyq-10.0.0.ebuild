@@ -18,8 +18,8 @@ fi
 
 LICENSE="GPL-3+"
 SLOT="0"
-#KEYWORDS="~amd64 ~x86 ~amd64-linux ~x86-linux"
-IUSE="X debug kde qt6 test"
+KEYWORDS="amd64 ~x86 ~amd64-linux ~x86-linux"
+IUSE="X debug kde +qt6 test"
 RESTRICT="test"
 REQUIRED_USE="
 	qt6? ( !kde )
