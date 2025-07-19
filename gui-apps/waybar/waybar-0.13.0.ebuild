@@ -1,4 +1,4 @@
-# Copyright 1999-2024 Gentoo Authors
+# Copyright 1999-2025 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
@@ -19,16 +19,15 @@ fi
 
 LICENSE="MIT"
 SLOT="0"
-IUSE="cava evdev experimental gps jack libcxx +libinput +logind mpd mpris network pipewire pulseaudio sndio systemd test tray +udev upower wifi"
+IUSE="cava evdev experimental gps jack libcxx +libinput +logind +man mpd mpris network pipewire pulseaudio sndio systemd test tray +udev upower wifi"
 REQUIRED_USE="
 	upower? ( logind )
-	cava? ( !cava )
 "
 
 RESTRICT="!test? ( test )"
 
 BDEPEND="
-	>=app-text/scdoc-1.9.2
+	man? ( >=app-text/scdoc-1.9.2 )
 	dev-util/gdbus-codegen
 	virtual/pkgconfig
 "
@@ -36,7 +35,6 @@ RDEPEND="
 	dev-cpp/cairomm:0
 	dev-cpp/glibmm:2
 	dev-cpp/gtkmm:3.0
-	dev-libs/glib:2
 	dev-libs/jsoncpp:=
 	dev-libs/libinput:=
 	dev-libs/libsigc++:2
@@ -44,11 +42,11 @@ RDEPEND="
 	>=dev-libs/spdlog-1.10.0:=
 	dev-libs/wayland
 	gui-libs/gtk-layer-shell
-	gui-libs/wlroots:=
 	x11-libs/gtk+:3[wayland]
 	x11-libs/libxkbcommon
-	cava? ( =media-sound/cava-0.10.4 )
+	cava? ( =media-sound/cava-0.10.4[sdl] )
 	evdev? ( dev-libs/libevdev:= )
+	gps? ( sci-geosciences/gpsd )
 	jack? ( virtual/jack )
 	libinput? ( dev-libs/libinput:= )
 	logind? (
@@ -63,11 +61,11 @@ RDEPEND="
 	sndio? ( media-sound/sndio:= )
 	systemd? ( sys-apps/systemd:= )
 	tray? (
-		dev-libs/libdbusmenu[gtk3]
 		dev-libs/libayatana-appindicator
+		dev-libs/libdbusmenu[gtk3]
 	)
 	udev? ( virtual/libudev:= )
-	upower? ( sys-power/upower )
+	upower? ( sys-power/upower:= )
 	wifi? ( sys-apps/util-linux )
 "
 DEPEND="${RDEPEND}
@@ -77,7 +75,7 @@ DEPEND="${RDEPEND}
 
 src_configure() {
 	local emesonargs=(
-		-Dman-pages=enabled
+		$(meson_feature man man-pages)
 		$(meson_feature cava)
 		$(meson_feature evdev libevdev)
 		$(meson_feature gps)

@@ -3,20 +3,23 @@
 
 EAPI=8
 
-inherit autotools toolchain-funcs cmake
+EMESON_BUILDTYPE="release"
+
+inherit meson
 
 DESCRIPTION="Console-based Audio Visualizer for Alsa"
-HOMEPAGE="https://github.com/karlstav/cava/"
+HOMEPAGE="
+	https://github.com/karlstav/cava/
+	https://github.com/LukashonakV/cava
+"
 
-# Bug https://github.com/karlstav/cava/issues/650
 #SRC_URI="https://github.com/karlstav/cava/releases/download/${PV}/${P}.tar.gz"
-RESTRICT="nomirror"
-SRC_URI="https://github.com/karlstav/cava/archive/refs/tags/${PV}.tar.gz -> ${P}.tar.gz"
+SRC_URI="https://github.com/LukashonakV/cava/archive/refs/tags/${PV}.tar.gz"
 
 LICENSE="MIT Unlicense"
 SLOT="0"
 KEYWORDS="amd64 x86"
-IUSE="alsa cavalib jack +ncurses pipewire portaudio pulseaudio sdl sndio"
+IUSE="alsa jack +ncurses pipewire portaudio pulseaudio sdl sndio"
 
 RDEPEND="
 	>=dev-libs/iniparser-4.1-r2:=
@@ -38,45 +41,24 @@ BDEPEND="
 	virtual/pkgconfig
 "
 
-src_prepare() {
-	default
-
-	# TODO: depend on >=iniparser-4.2 and drop this if fixed
-	# https://github.com/karlstav/cava/issues/622
-	[[ -z ${ESYSROOT} ]] || sed -i "s|/usr|${ESYSROOT}&|" configure || die
-
-	eautoreconf
-	if use cavalib
-	then
-		cmake_src_prepare
-	fi
-}
-
 src_configure() {
-	local econfargs=(
-		$(use_enable alsa input-alsa)
-		$(use_enable jack input-jack)
-		$(use_enable pipewire input-pipewire)
-		$(use_enable portaudio input-portaudio)
-		$(use_enable pulseaudio input-pulse)
-		$(use_enable sndio input-sndio)
+	local emesonargs=(
+		-Dbuild_target=all
+		-Dcava_font=true
+		$(meson_feature alsa input_alsa)
+		$(meson_feature jack input_jack)
+		$(meson_feature pipewire input_pipewire)
+		$(meson_feature portaudio input_portaudio)
+		$(meson_feature pulseaudio input_pulse)
+		$(meson_feature sndio input_sndio)
 
-		$(use_enable ncurses output-ncurses)
-		$(use_enable sdl output-sdl)
+		$(meson_feature ncurses output_ncurses)
+		$(meson_feature sdl output_sdl)
 		# note: not behind USE=opengl and sdl2[opengl?] given have not gotten
 		# normal output-sdl to work without USE=opengl on sdl either way
-		$(use_enable sdl output-sdl_glsl)
+		$(meson_feature sdl output_sdl_glsl)
 	)
-
-	# autoconf-archive (currently) does not support -lOpenGL for libglvnd[-X]
-	use sdl && econfargs+=( GL_LIBS="$($(tc-getPKG_CONFIG) --libs opengl || die)" )
-
-	econf "${econfargs[@]}"
-
-	if use cavalib
-	then
-		cmake_src_configure
-	fi
+	meson_src_configure
 }
 
 pkg_postinst() {
