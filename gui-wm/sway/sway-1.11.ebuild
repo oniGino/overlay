@@ -1,4 +1,4 @@
-# Copyright 1999-2024 Gentoo Authors
+# Copyright 1999-2025 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
@@ -20,7 +20,7 @@ fi
 
 LICENSE="MIT"
 SLOT="0"
-IUSE="+man +swaybar +swaynag tray wallpapers X"
+IUSE="+bash-completions fish-completions +man +swaybar +swaynag tray wallpapers X zsh-completions"
 REQUIRED_USE="tray? ( swaybar )"
 
 DEPEND="
@@ -49,15 +49,15 @@ DEPEND="
 "
 # x11-libs/xcb-util-wm needed for xcb-iccm
 if [[ ${PV} == 9999 ]]; then
-	DEPEND+="~gui-libs/wlroots-9999:=[X?]"
+	DEPEND+="~gui-libs/wlroots-9999:=[X=]"
 else
 	DEPEND+="
-		>=gui-libs/wlroots-0.18:=[X?]
+		gui-libs/wlroots:0.19[X=]
 	"
 fi
 RDEPEND="
-	x11-misc/xkeyboard-config
 	${DEPEND}
+	x11-misc/xkeyboard-config
 "
 BDEPEND="
 	>=dev-libs/wayland-protocols-1.24
@@ -82,9 +82,9 @@ src_configure() {
 		$(meson_use swaynag)
 		$(meson_use swaybar)
 		$(meson_use wallpapers default-wallpaper)
-		-Dfish-completions=true
-		-Dzsh-completions=true
-		-Dbash-completions=true
+		$(meson_use fish-completions)
+		$(meson_use zsh-completions)
+		$(meson_use bash-completions)
 	)
 
 	meson_src_configure
