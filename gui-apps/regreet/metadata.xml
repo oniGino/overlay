@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "https://liguros.gitlab.io/dtd/metadata.dtd">
+<pkgmetadata>
+ <maintainer type="person">
+  <email>gonegrier.duarte@gmail.com</email>
+  <name>Gonçalo Negrier Duarte</name>
+ </maintainer>
+ <upstream>
+  <maintainer>
+   <email>harish.rajagopals@gmail.com</email>
+   <name>Harish Rajagopal</name>
+  </maintainer>
+ </upstream>
+ <use>
+  <flag name="systemd">Use system-tmpfiles to create cache and logs folder</flag>
+  <flag name="openrc">Manually create cache and logs folder</flag>
+ </use>
+ <origin>gentoo-guru-overlay</origin>
+</pkgmetadata>
