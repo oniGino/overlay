@@ -5,8 +5,8 @@ EAPI=8
 
 ECM_HANDBOOK="optional"
 ECM_TEST="true"
-KFMIN=6.13.0
-QTMIN=6.7.2
+KFMIN=6.16.0
+QTMIN=6.9.1
 inherit ecm gear.kde.org optfeature xdg
 
 DESCRIPTION="KIO plugins present a filesystem-like view of arbitrary data"
@@ -15,7 +15,7 @@ HOMEPAGE="https://invent.kde.org/network/kio-extras"
 LICENSE="GPL-2" # TODO: CHECK
 SLOT="6"
 KEYWORDS="~amd64 ~arm64 ~loong ~ppc64 ~riscv ~x86"
-IUSE="activities +kde ios +man mtp nfs +libproxy openexr phonon samba +sftp taglib +thumbnails X"
+IUSE="activities ios kde +man mtp nfs +libproxy openexr phonon samba +sftp taglib X"
 
 # requires running Plasma environment
 RESTRICT="test"
@@ -25,7 +25,7 @@ DEPEND="
 	>=dev-qt/qt5compat-${QTMIN}:6
 	>=dev-qt/qtbase-${QTMIN}:6[dbus,gui,network,widgets,xml]
 	>=dev-qt/qtsvg-${QTMIN}:6
-	thumbnails? ( kde-apps/libkexiv2:6 )
+	kde-apps/libkexiv2:6
 	>=kde-frameworks/karchive-${KFMIN}:6
 	>=kde-frameworks/kcmutils-${KFMIN}:6
 	>=kde-frameworks/kcodecs-${KFMIN}:6
@@ -39,7 +39,6 @@ DEPEND="
 	>=kde-frameworks/kio-${KFMIN}:6
 	>=kde-frameworks/kparts-${KFMIN}:6
 	>=kde-frameworks/kservice-${KFMIN}:6
-	>=kde-frameworks/ktextwidgets-${KFMIN}:6
 	>=kde-frameworks/kxmlgui-${KFMIN}:6
 	>=kde-frameworks/solid-${KFMIN}:6
 	>=kde-frameworks/syntax-highlighting-${KFMIN}:6

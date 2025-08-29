@@ -7,8 +7,8 @@ ECM_DESIGNERPLUGIN="true"
 ECM_HANDBOOK="optional"
 ECM_QTHELP="true"
 ECM_TEST="true"
-KFMIN=6.9.0
-QTMIN=6.7.2
+KFMIN=6.16.0
+QTMIN=6.9.1
 inherit ecm gear.kde.org optfeature xdg
 
 DESCRIPTION="Non-linear video editing suite by KDE"
@@ -16,7 +16,7 @@ HOMEPAGE="https://kdenlive.org/en/"
 
 LICENSE="GPL-3"
 SLOT="6"
-KEYWORDS="~amd64 ~arm64"
+KEYWORDS="~amd64 ~arm64 ~loong ~ppc64 ~riscv ~x86"
 IUSE="gles2-only info semantic-desktop v4l X"
 
 RESTRICT="test" # segfaults, bug 684132
