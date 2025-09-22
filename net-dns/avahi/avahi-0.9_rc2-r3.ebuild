@@ -3,7 +3,7 @@
 
 EAPI=8
 
-PYTHON_COMPAT=( python3_{9..13} )
+PYTHON_COMPAT=( python3_{11..13} )
 PYTHON_REQ_USE="gdbm"
 inherit autotools multilib-minimal python-single-r1 systemd
 
@@ -14,31 +14,29 @@ S="${WORKDIR}/${PN}-${PV/_/-}"
 
 LICENSE="LGPL-2.1"
 SLOT="0"
-KEYWORDS="~alpha amd64 arm arm64 hppa ~loong ~mips ppc ppc64 ~riscv ~s390 sparc x86"
-IUSE="autoipd bookmarks +dbus doc +glib gdbm gtk howl-compat +introspection ipv6 mdnsresponder-compat +man nls python qt5 selinux systemd test"
+KEYWORDS="~alpha amd64 arm arm64 ~hppa ~loong ~mips ppc ppc64 ~riscv ~s390 ~sparc x86"
+IUSE="autoipd bookmarks +dbus doc +glib gdbm gtk howl-compat +introspection mdnsresponder-compat +man nls python qt6 selinux systemd test"
 
 REQUIRED_USE="
-	python? ( dbus gdbm ${PYTHON_REQUIRED_USE} )
 	bookmarks? ( python )
 	howl-compat? ( dbus )
 	mdnsresponder-compat? ( dbus )
+	python? ( dbus gdbm ${PYTHON_REQUIRED_USE} )
 	systemd? ( dbus )
 "
 
 RESTRICT="!test? ( test )"
 
 DEPEND="
+	dev-libs/expat
 	dev-libs/libdaemon
 	dev-libs/libevent:=[${MULTILIB_USEDEP}]
-	dev-libs/expat
-	glib? ( dev-libs/glib:2[${MULTILIB_USEDEP}] )
-	gdbm? ( sys-libs/gdbm:=[${MULTILIB_USEDEP}] )
-	qt5? ( dev-qt/qtcore:5 )
-	gtk?  ( x11-libs/gtk+:3[${MULTILIB_USEDEP}] )
 	dbus? ( sys-apps/dbus[${MULTILIB_USEDEP}] )
-	kernel_linux? ( sys-libs/libcap )
+	gdbm? ( sys-libs/gdbm:=[${MULTILIB_USEDEP}] )
+	glib? ( dev-libs/glib:2[${MULTILIB_USEDEP}] )
+	gtk?  ( x11-libs/gtk+:3[${MULTILIB_USEDEP}] )
 	introspection? ( dev-libs/gobject-introspection:= )
-	systemd? ( sys-apps/systemd:=[${MULTILIB_USEDEP}] )
+	kernel_linux? ( sys-libs/libcap )
 	python? (
 		${PYTHON_DEPS}
 		$(python_gen_cond_dep '
@@ -47,8 +45,11 @@ DEPEND="
 			introspection? ( dev-python/pygobject:3[${PYTHON_USEDEP}] )
 		')
 	)
+	qt6? ( dev-qt/qtbase:6 )
+	systemd? ( sys-apps/systemd:=[${MULTILIB_USEDEP}] )
 "
 RDEPEND="
+	${DEPEND}
 	acct-user/avahi
 	acct-group/avahi
 	acct-group/netdev
@@ -56,21 +57,23 @@ RDEPEND="
 		acct-user/avahi-autoipd
 		acct-group/avahi-autoipd
 	)
-	${DEPEND}
 	selinux? ( sec-policy/selinux-avahi )
 "
 BDEPEND="
+	sys-devel/gettext
+	virtual/pkgconfig
 	glib? ( dev-util/glib-utils )
 	doc? ( app-text/doxygen )
 	man? ( app-text/xmltoman )
-	sys-devel/gettext
-	virtual/pkgconfig
 "
 
-MULTILIB_WRAPPED_HEADERS=( /usr/include/avahi-qt5/qt-watch.h )
+MULTILIB_WRAPPED_HEADERS=( /usr/include/avahi-qt6/qt-watch.h )
 
 PATCHES=(
-	"${FILESDIR}/avahi-0.9_rc1-disable-avahi-ui-sharp.patch" # bug 769062
+	"${FILESDIR}/${PN}-0.9_rc1-disable-avahi-ui-sharp.patch" # bug 769062
+	"${FILESDIR}/${P}-CVE-2024-52615.patch"
+	"${FILESDIR}/${P}-glibc-2.42.patch"
+	"${FILESDIR}/${P}-qt6.patch" # bug 961804
 )
 
 pkg_setup() {
@@ -79,12 +82,6 @@ pkg_setup() {
 
 src_prepare() {
 	default
-
-	if ! use ipv6; then
-		sed -i \
-			-e "s/use-ipv6=yes/use-ipv6=no/" \
-			avahi-daemon/avahi-daemon.conf || die
-	fi
 
 	sed -i \
 		-e "s:\\.\\./\\.\\./\\.\\./doc/avahi-docs/html/:../../../doc/${PF}/html/:" \
@@ -104,14 +101,15 @@ multilib_src_configure() {
 		--disable-python-dbus
 		--disable-qt3
 		--disable-qt4
+		--disable-qt5
 		--disable-static
 		--localstatedir="${EPREFIX}/var"
 		--runstatedir="${EPREFIX}/run"
 		--with-distro=gentoo
 		--with-systemdsystemunitdir="$(systemd_get_systemunitdir)"
 		$(use_enable dbus)
-		$(use_enable glib)
 		$(use_enable gdbm)
+		$(use_enable glib)
 		$(use_enable gtk gtk3)
 		$(use_enable howl-compat compat-howl)
 		$(use_enable introspection gobject)
@@ -142,7 +140,7 @@ multilib_src_configure() {
 		)
 	fi
 
-	myconf+=( $(multilib_native_use_enable qt5) )
+	myconf+=( $(multilib_native_use_enable qt6) )
 
 	econf "${myconf[@]}"
 }
