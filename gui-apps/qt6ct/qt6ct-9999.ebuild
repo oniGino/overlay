@@ -6,12 +6,12 @@ EAPI=8
 inherit cmake
 
 DESCRIPTION="Qt6 Configuration Tool (for DE/WM without Qt integration)"
-HOMEPAGE="https://github.com/ilya-fedin/qt6ct/"
+HOMEPAGE="https://www.opencode.net/trialuser/qt6ct"
 if [ ${PV} == 9999 ]; then
 	inherit git-r3
-	EGIT_REPO_URI="https://github.com/ilya-fedin/qt6ct.git"
+	EGIT_REPO_URI="https://www.opencode.net/trialuser/qt6ct"
 else
-	SRC_URI="https://github.com/ilya-fedin/${PN}/archive/refs/tags/${PV}.tar.gz -> ${P}.tar.gz"
+	SRC_URI="https://www.opencode.net/trialuser/qt6ct/-/archive/${PV}/${P}.tar.bz2"
 fi
 
 LICENSE="BSD-2"
