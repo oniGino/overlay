@@ -9,14 +9,15 @@ LICENSE="metapackage"
 SLOT="5"
 KEYWORDS="amd64 ~arm64 ~x86"
 
+	#app-admin/pass
+	#dev-python/vdirsyncer
+	#app-admin/pass
+	#mail-mta/msmtp
 RDEPEND="
-	app-admin/pass
 	app-misc/khal
 	app-misc/khard
-	dev-python/vdirsyncer
+	app-office/pimsync
 	mail-client/neomutt
 	net-mail/isync
-	mail-mta/msmtp
-	app-admin/pass
 "
 
