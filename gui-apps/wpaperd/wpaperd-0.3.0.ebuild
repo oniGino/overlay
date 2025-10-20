@@ -4,7 +4,7 @@
 EAPI=8
 
 CRATES="
-	addr2line-0.19.0
+	addr2line-0.21.0
 	adler-1.0.2
 	ahash-0.7.6
 	aho-corasick-0.7.20
