@@ -2,10 +2,7 @@
 <!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
 <pkgmetadata>
 	<maintainer type="person">
-		<email>ionen@gentoo.org</email>
-		<name>Ionen Wolkens</name>
-	</maintainer>
-	<upstream>
-		<remote-id type="github">ilya-fedin/qt6ct</remote-id>
-	</upstream>
+		<email>onigino@protonmail.com</email>
+		<name>Gino</name>
+  </maintainer>
 </pkgmetadata>

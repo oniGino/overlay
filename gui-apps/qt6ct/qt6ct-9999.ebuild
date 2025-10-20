@@ -5,11 +5,11 @@ EAPI=8
 
 inherit cmake
 
-DESCRIPTION="Qt6 Configuration Tool (for DE/WM without Qt integration)"
+DESCRIPTION="Qt6 Configuration Tool (for DE/WM without Qt integration) - with KDE Color Support"
 HOMEPAGE="https://www.opencode.net/trialuser/qt6ct"
 if [ ${PV} == 9999 ]; then
 	inherit git-r3
-	EGIT_REPO_URI="https://www.opencode.net/trialuser/qt6ct"
+	EGIT_REPO_URI="https://www.github.com/oniGino/qt6ct.git"
 else
 	SRC_URI="https://www.opencode.net/trialuser/qt6ct/-/archive/${PV}/${P}.tar.bz2"
 fi
