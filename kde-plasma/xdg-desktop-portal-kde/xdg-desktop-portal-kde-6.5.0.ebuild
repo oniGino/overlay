@@ -4,15 +4,15 @@
 EAPI=8
 
 ECM_TEST="forceoptional"
-KFMIN=6.14.0
-QTMIN=6.8.1
+KFMIN=6.18.0
+QTMIN=6.9.1
 inherit ecm plasma.kde.org xdg
 
 DESCRIPTION="Backend implementation for xdg-desktop-portal that is using Qt/KDE Frameworks"
 
 LICENSE="LGPL-2+"
 SLOT="6"
-KEYWORDS="~amd64 ~arm64 ~loong ~ppc64 ~riscv ~x86"
+KEYWORDS="~amd64"
 IUSE="plasma"
 
 # dev-qt/qtbase:= slot op: Uses Qt::GuiPrivate for qtx11extras_p.h
@@ -20,13 +20,12 @@ IUSE="plasma"
 # dev-qt/qtgui: QtXkbCommonSupport is provided by either IUSE libinput or X
 COMMON_DEPEND="
 	>=dev-libs/wayland-1.15
-	>=dev-qt/qtbase-${QTMIN}:6=[cups,dbus,gui,widgets]
+	>=dev-qt/qtbase-${QTMIN}:6=[cups,dbus,gui,wayland,widgets]
 	>=dev-qt/qtdeclarative-${QTMIN}:6
 	|| (
 		>=dev-qt/qtbase-${QTMIN}:6[libinput]
 		>=dev-qt/qtbase-${QTMIN}:6[X]
 	)
-	>=dev-qt/qtwayland-${QTMIN}:6
 	>=kde-frameworks/kcoreaddons-${KFMIN}:6[dbus]
 	>=kde-frameworks/kconfig-${KFMIN}:6
 	>=kde-frameworks/kcrash-${KFMIN}:6
@@ -46,7 +45,7 @@ COMMON_DEPEND="
 	x11-libs/libxkbcommon
 "
 DEPEND="${COMMON_DEPEND}
-	>=dev-libs/plasma-wayland-protocols-1.18.0
+	>=dev-libs/plasma-wayland-protocols-1.19.0
 	>=dev-libs/wayland-protocols-1.25
 	>=dev-qt/qtbase-${QTMIN}:6[concurrent]
 "
@@ -54,10 +53,13 @@ RDEPEND="${COMMON_DEPEND}
 	kde-misc/kio-fuse:6
 	sys-apps/xdg-desktop-portal
 "
+RDEPEND+=" || ( >=dev-qt/qtbase-6.10:6[wayland] <dev-qt/qtwayland-6.10:6 )"
+
 BDEPEND="
-	>=dev-qt/qtwayland-${QTMIN}:6
+	>=dev-qt/qtbase-${QTMIN}:6[wayland]
 	virtual/pkgconfig
 "
+BDEPEND+=" || ( >=dev-qt/qtbase-6.10:6[wayland] <dev-qt/qtwayland-6.10:6 )"
 
 CMAKE_SKIP_TESTS=(
 	# bugs: 926483, wants dbus/X11

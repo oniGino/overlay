@@ -4,8 +4,8 @@
 EAPI=8
 
 KDE_ORG_NAME="${PN}-1"
-KFMIN=6.14.0
-QTMIN=6.8.1
+KFMIN=6.18.0
+QTMIN=6.9.1
 inherit ecm plasma.kde.org xdg
 
 DESCRIPTION="PolKit agent module for KDE Plasma"
@@ -13,11 +13,11 @@ HOMEPAGE="https://kde.org/"
 
 LICENSE="GPL-2" # TODO: CHECK
 SLOT="6"
-KEYWORDS="~amd64 ~arm64 ~ppc64 ~riscv ~x86"
+KEYWORDS="~amd64"
 IUSE="plasma X"
 
 DEPEND="
-	>=dev-qt/qtbase-${QTMIN}:6[dbus,gui,widgets,X?]
+	>=dev-qt/qtbase-${QTMIN}:6[dbus,gui,widgets]
 	>=dev-qt/qtdeclarative-${QTMIN}:6
 	>=kde-frameworks/kcoreaddons-${KFMIN}:6
 	>=kde-frameworks/kcrash-${KFMIN}:6
