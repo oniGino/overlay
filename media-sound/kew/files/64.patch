@@ -1,0 +1,21 @@
+--- a/Makefile	2025-10-20 12:35:41.000000000 -0700
++++ b/Makefile	2025-10-29 01:38:43.836626560 -0700
+
+@@ -35,7 +35,7 @@
+         PKG_CONFIG_PATH := /usr/local/lib/pkgconfig:/usr/local/share/pkgconfig:$(PKG_CONFIG_PATH)
+     endif
+ else
+-    PREFIX ?= /usr/local
++    PREFIX ?= /usr
+     PKG_CONFIG_PATH := /usr/lib/x86_64-linux-gnu/pkgconfig:/usr/lib/pkgconfig:/usr/share/pkgconfig:$(PKG_CONFIG_PATH)
+ endif
+ 
+@@ -96,7 +96,7 @@
+ CXXFLAGS = $(COMMONFLAGS) -std=c++11
+ 
+ # Libraries
+-LIBS = -L/usr/lib -lm -lopusfile -lglib-2.0 -lpthread $(shell PKG_CONFIG_PATH=$(PKG_CONFIG_PATH) $(PKG_CONFIG) --libs gio-2.0 chafa fftw3f opus opusfile ogg vorbis vorbisfile glib-2.0 taglib)
++LIBS = -L/usr/lib64 -lm -lopusfile -lglib-2.0 -lpthread $(shell PKG_CONFIG_PATH=$(PKG_CONFIG_PATH) $(PKG_CONFIG) --libs gio-2.0 chafa fftw3f opus opusfile ogg vorbis vorbisfile glib-2.0 taglib)
+ LIBS += -lstdc++
+ 
+ LDFLAGS = -logg -lz
