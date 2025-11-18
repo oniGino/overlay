@@ -127,9 +127,10 @@ RDEPEND="
 "
 DEPEND="${RDEPEND}"
 
+
 src_prepare() {
     ecm_src_prepare
-    ecm_punt_po_install
+	ecm_punt_po_install
 	ecm_punt_kdoctools_install
 
 	cmake_comment_add_subdirectory korganizer
