@@ -1,0 +1,11 @@
+--- 1/CMakeLists.txt	2025-12-03 14:24:23.000000000 -0800
++++ 2/CMakeLists.txt	2026-01-04 11:12:56.431894746 -0800
+@@ -63,7 +63,7 @@
+ endif()
+ 
+ if (UNIX AND NOT APPLE AND NOT HAIKU)
+-    set(HAVE_X11 TRUE)
++    option(HAVE_X11 "Build against X11" TRUE)
+ endif()
+ 
+ find_package(KF6 ${KF6_MIN_VERSION} REQUIRED COMPONENTS

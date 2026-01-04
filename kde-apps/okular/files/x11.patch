@@ -1,0 +1,11 @@
+--- 1/CMakeLists.txt	2025-12-03 14:33:58.000000000 -0800
++++ 2/CMakeLists.txt	2026-01-04 12:41:42.390015784 -0800
+@@ -206,7 +206,7 @@
+     else()
+         find_package(Qt6Gui REQUIRED COMPONENTS Private)
+     endif()
+-    set(HAVE_X11 TRUE)
++    option(HAVE_X11 "Build against X11" TRUE)
+ else()
+     set(HAVE_X11 FALSE)
+ endif()

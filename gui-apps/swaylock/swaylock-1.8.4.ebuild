@@ -38,9 +38,9 @@ BDEPEND="
 
 src_configure() {
 	local emesonargs=(
-		-Dman-pages=$(usex man enabled disabled)
-		-Dpam=$(usex pam enabled disabled)
-		-Dgdk-pixbuf=$(usex gdk-pixbuf enabled disabled)
+		"$(meson_feature pam)"
+		"$(meson_feature gdk-pixbuf)"
+		"$(meson_feature man man-pages)"
 		"$(meson_use fish-completion fish-completions)"
 		"$(meson_use zsh-completion zsh-completions)"
 		"$(meson_use bash-completion bash-completions)"
@@ -49,8 +49,11 @@ src_configure() {
 	meson_src_configure
 }
 
+src_install() {
+	meson_src_install
+	use pam || fperms u+s /usr/bin/swaylock
+}
+
 pkg_postinst() {
-	if ! use pam; then
-		fcaps cap_sys_admin usr/bin/swaylock
-	fi
+	use pam || fcaps -M u-s cap_dac_read_search usr/bin/swaylock
 }
