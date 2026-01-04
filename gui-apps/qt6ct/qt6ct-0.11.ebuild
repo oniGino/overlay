@@ -7,12 +7,7 @@ inherit cmake
 
 DESCRIPTION="Qt6 Configuration Tool (for DE/WM without Qt integration)"
 HOMEPAGE="https://www.opencode.net/trialuser/qt6ct/"
-if [[ "${PV}" == "9999" ]]; then
-	inherit git-r3
-	EGIT_REPO_URI="https://www.opencode.net/trialuser/qt6ct.git"
-else
-	SRC_URI="https://www.opencode.net/api/v4/projects/5459/packages/generic/qt6ct/${PV}/${P}.tar.xz"
-fi
+SRC_URI="https://www.opencode.net/api/v4/projects/5459/packages/generic/qt6ct/${PV}/${P}.tar.xz"
 
 LICENSE="BSD-2"
 SLOT="0"

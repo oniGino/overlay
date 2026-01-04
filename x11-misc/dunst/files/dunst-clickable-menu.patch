@@ -1,0 +1,829 @@
+From 68ef2b275388ca9c11cce361541f6ef5033169d0 Mon Sep 17 00:00:00 2001
+From: LI Qingwu <Qing-wu.Li@leica-geosystems.com.cn>
+Date: Thu, 6 Feb 2025 15:51:12 +0800
+Subject: [PATCH 1/8] Add built-in menu structure and functions
+
+Implement menu structure and related functions,
+preparing for clickable menu feature.
+Add new menus array to preserve current actions.
+
+Signed-off-by: LI Qingwu <Qing-wu.Li@leica-geosystems.com.cn>
+---
+ src/menu.c         | 86 ++++++++++++++++++++++++++++++++++++++++++++++
+ src/menu.h         | 61 ++++++++++++++++++++++++++++++++
+ src/notification.h |  3 ++
+ 3 files changed, 150 insertions(+)
+
+diff --git a/src/menu.c b/src/menu.c
+index 4bc97eaf3..985c4376a 100644
+--- a/src/menu.c
++++ b/src/menu.c
+@@ -392,4 +392,90 @@ static gpointer context_menu_thread(gpointer data)
+ 
+         return NULL;
+ }
++
++
++gboolean menu_init(struct notification *n)
++{
++        if (n->actions == NULL) {
++                return false;
++        }
++
++        gpointer p_key;
++        gpointer p_value;
++        GHashTableIter iter;
++        n->menus = g_array_sized_new(FALSE, FALSE, sizeof(struct menu),
++                                     g_hash_table_size(n->actions));
++
++        g_hash_table_iter_init(&iter, n->actions);
++        while (g_hash_table_iter_next(&iter, &p_key, &p_value)) {
++                char *key = (char *)p_key;
++                char *value = (char *)p_value;
++                struct menu button = {.value = g_strdup(value),
++                                      .key = g_strdup(key),
++                                      .x = 0,
++                                      .y = 0,
++                                      .width = 0,
++                                      .height = 0};
++
++                g_array_append_val(n->menus, button);
++        }
++        return true;
++}
++
++int menu_get_count(struct notification *n)
++{
++        if (!n->menus) {
++                return 0;
++        }
++        return n->menus->len;
++}
++
++char *menu_get_label(struct notification *n, int index)
++{
++        if (index < 0 || index >= n->menus->len || !n->menus)
++                return NULL;
++        struct menu *button = &g_array_index(n->menus, struct menu, index);
++        return button->value;
++}
++
++void menu_set_position(struct notification *n, int index, int x, int y,
++                       int width, int height)
++{
++        if (index < 0 || index >= n->menus->len || !n->menus)
++                return;
++        struct menu *button = &g_array_index(n->menus, struct menu, index);
++        button->x = x;
++        button->y = y;
++        button->width = width;
++        button->height = height;
++}
++
++void menu_free_array(struct notification *n)
++{
++        if (!n->menus)
++                return;
++        for (guint i = 0; i < n->menus->len; i++) {
++                struct menu *button = &g_array_index(n->menus, struct menu, i);
++                g_free(button->value);
++                g_free(button->key);
++        }
++        g_array_free(n->menus, TRUE);
++        n->menus = NULL;
++}
++
++struct menu *menu_get_at(struct notification *n, int x, int y)
++{
++        if (!n->menus)
++                return NULL;
++        for (guint i = 0; i < n->menus->len; i++) {
++                struct menu *button = &g_array_index(n->menus, struct menu, i);
++                if (x >= button->x && x <= button->x + button->width &&
++                    y >= button->y + n->displayed_top &&
++                    y <= button->y + n->displayed_top + button->height) {
++                        return button;
++                }
++        }
++        return NULL;
++}
++
+ /* vim: set ft=c tabstop=8 shiftwidth=8 expandtab textwidth=0: */
+diff --git a/src/menu.h b/src/menu.h
+index 5263c585f..a30cedaef 100644
+--- a/src/menu.h
++++ b/src/menu.h
+@@ -2,6 +2,7 @@
+ #ifndef DUNST_MENU_H
+ #define DUNST_MENU_H
+ 
++#include "notification.h"
+ #include <glib.h>
+ 
+ /**
+@@ -28,5 +29,65 @@ void context_menu(void);
+  */
+ void context_menu_for(GList *notifications);
+ 
++struct menu {
++        char *key;
++        char *value;
++        int height;
++        int width;
++        int x;
++        int y;
++};
++
++/**
++ * Initialize the menu structure for a given notification.
++ * This function creates a new array of menu items based on the actions.
++ * @param n The notification for which to initialize the menu
++ * @return TRUE if the initialization was successful, FALSE otherwise
++ */
++gboolean menu_init(struct notification *n);
++
++/**
++ * Get the label (display text) for a menu item at a specific index.
++ * @param n The notification containing the menu
++ * @param index The index of the menu item
++ * @return The label of the menu item at the specified index
++ */
++char *menu_get_label(struct notification *n, int index);
++
++/**
++ * Get the number of menu items for a given notification.
++ * @param n The notification containing the menu
++ * @return The number of menu items
++ */
++int menu_get_count(struct notification *n);
++
++/**
++ * Set the position and size of a menu item for a given notification.
++ * @param n The notification containing the menu
++ * @param index The index of the menu item to update
++ * @param x The x-coordinate of the menu item
++ * @param y The y-coordinate of the menu item
++ * @param width The width of the menu item
++ * @param height The height of the menu item
++ */
++void menu_set_position(struct notification *n, int index, int x, int y,
++                       int width, int height);
++
++/**
++ * Get the menu item at a specific coordinate.
++ * @param n The notification containing the menu
++ * @param x The x-coordinate to check
++ * @param y The y-coordinate to check
++ * @return A pointer to the menu item at the specified coordinates,
++ * or NULL if not found.
++ */
++struct menu *menu_get_at(struct notification *n, int x, int y);
++
++/**
++ * Free the memory allocated for the menu array in a notification.
++ * @param n The notification containing the menu array to be freed.
++ */
++void menu_free_array(struct notification *n);
++
+ #endif
+ /* vim: set ft=c tabstop=8 shiftwidth=8 expandtab textwidth=0: */
+diff --git a/src/notification.h b/src/notification.h
+index 7d2f0d68a..4795096cf 100644
+--- a/src/notification.h
++++ b/src/notification.h
+@@ -103,6 +103,7 @@ struct notification {
+         bool first_render;      /**< markup has been rendered before? */
+         int dup_count;          /**< amount of duplicate notifications stacked onto this */
+         int displayed_height;
++        int displayed_top;
+         enum behavior_fullscreen fullscreen; //!< The instruction what to do with it, when desktop enters fullscreen
+         bool script_run;        /**< Has the script been executed already? */
+         guint8 marked_for_closure;
+@@ -115,6 +116,8 @@ struct notification {
+         char *msg;            /**< formatted message */
+         char *text_to_render; /**< formatted message (with age and action indicators) */
+         char *urls;           /**< urllist delimited by '\\n' */
++
++        GArray *menus;
+ };
+ 
+ /**
+
+From d07548aee44c865ad9df4580cd063329838b217c Mon Sep 17 00:00:00 2001
+From: LI Qingwu <Qing-wu.Li@leica-geosystems.com.cn>
+Date: Thu, 6 Feb 2025 16:47:26 +0800
+Subject: [PATCH 2/8] Add settings for built-in clickable menu
+
+Introduce built-in menu settings in dunstrc.
+Add corresponding settings in settings.h.
+Update settings_data.h with new menu-related options.
+Preparing for built-in clickable menu.
+
+Signed-off-by: LI Qingwu <Qing-wu.Li@leica-geosystems.com.cn>
+---
+ dunstrc             | 15 ++++++++
+ src/settings.h      | 10 +++++
+ src/settings_data.h | 90 +++++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 115 insertions(+)
+
+diff --git a/dunstrc b/dunstrc
+index 074f2c8db..1514baa8a 100644
+--- a/dunstrc
++++ b/dunstrc
+@@ -329,6 +329,21 @@
+     mouse_middle_click = do_action, close_current
+     mouse_right_click = close_all
+ 
++    ### action menu
++
++    built_in_menu = true
++    menu_frame_color = "#000000"
++
++    #set to true to fill the button with the frame color.
++    #set to false to draw the bounding box with the frame color and frame width.
++    menu_frame_fill = false
++    menu_frame_width = 1
++    menu_height = 30
++    menu_max_per_row = 4
++    menu_max_rows = 5
++    menu_max_width = 100
++    menu_min_width = 50
++
+ # Experimental features that may or may not work correctly. Do not expect them
+ # to have a consistent behaviour across releases.
+ [experimental]
+diff --git a/src/settings.h b/src/settings.h
+index 8e343849a..806770e04 100644
+--- a/src/settings.h
++++ b/src/settings.h
+@@ -178,6 +178,16 @@ struct settings {
+         int notification_limit;
+         int gap_size;
+         int default_pause_level;
++
++        bool built_in_menu;
++        bool menu_frame_fill;
++        int menu_frame_width;
++        int menu_height;
++        int menu_max_per_row;
++        int menu_max_rows;
++        int menu_max_width;
++        int menu_min_width;
++        struct color menu_frame_color;
+ };
+ 
+ extern struct settings settings;
+diff --git a/src/settings_data.h b/src/settings_data.h
+index e1fed74f9..d3ade130c 100644
+--- a/src/settings_data.h
++++ b/src/settings_data.h
+@@ -1618,6 +1618,96 @@ static const struct setting allowed_settings[] = {
+                 .parser = NULL,
+                 .parser_data = NULL,
+         },
++        {
++                .name = "built_in_menu",
++                .section = "global",
++                .description = "Enable or disable the built-in menu for actions",
++                .type = TYPE_CUSTOM,
++                .default_value = "true",
++                .value = &settings.built_in_menu,
++                .parser = string_parse_bool,
++                .parser_data = boolean_enum_data,
++        },
++        {
++                .name = "menu_frame_color",
++                .section = "global",
++                .description = "Frame color of the built-in menu",
++                .type = TYPE_COLOR,
++                .default_value = "#000000",
++                .value = &settings.menu_frame_color,
++                .parser = NULL,
++                .parser_data = NULL,
++        },
++        {
++                .name = "menu_frame_width",
++                .section = "global",
++                .description = "Set the width of the frame for the built-in menu",
++                .type = TYPE_INT,
++                .default_value = "1",
++                .value = &settings.menu_frame_width,
++                .parser = NULL,
++                .parser_data = NULL,
++        },
++        {
++                .name = "menu_frame_fill",
++                .section = "global",
++                .description = "Set if the frame should be filled or stroked",
++                .type = TYPE_CUSTOM,
++                .default_value = "false",
++                .value = &settings.menu_frame_fill,
++                .parser = string_parse_bool,
++                .parser_data = boolean_enum_data,
++        },
++        {
++                .name = "menu_height",
++                .section = "global",
++                .description = "The height of the menu in pixels",
++                .type = TYPE_INT,
++                .default_value = "30",
++                .value = &settings.menu_height,
++                .parser = NULL,
++                .parser_data = NULL,
++        },
++        {
++                .name = "menu_min_width",
++                .section = "global",
++                .description = "Minimum width of the menu in pixels",
++                .type = TYPE_INT,
++                .default_value = "50",
++                .value = &settings.menu_min_width,
++                .parser = NULL,
++                .parser_data = NULL,
++        },
++        {
++                .name = "menu_max_width",
++                .section = "global",
++                .description = "Maximum width of the menu in pixels",
++                .type = TYPE_INT,
++                .default_value = "100",
++                .value = &settings.menu_max_width,
++                .parser = NULL,
++                .parser_data = NULL,
++        },
++        {
++                .name = "menu_max_per_row",
++                .section = "global",
++                .description = "Maximum number of buttons allowed per row",
++                .type = TYPE_INT,
++                .default_value = "4",
++                .value = &settings.menu_max_per_row,
++                .parser = NULL,
++                .parser_data = NULL,
++        },
++        {
++                .name = "menu_max_rows",
++                .section = "global",
++                .description = "Maximum number of rows of buttons allowed",
++                .type = TYPE_INT,
++                .default_value = "5",
++                .value = &settings.menu_max_rows,
++                .parser = NULL,
++                .parser_data = NULL,
++        },
+ };
+ #endif
+ /* vim: set ft=c tabstop=8 shiftwidth=8 expandtab textwidth=0: */
+
+From 76243055223ec0ced50ddec77b75b845ecb0f78d Mon Sep 17 00:00:00 2001
+From: LI Qingwu <Qing-wu.Li@leica-geosystems.com.cn>
+Date: Thu, 6 Feb 2025 16:49:05 +0800
+Subject: [PATCH 3/8] Implement built-in clickable menu rendering
+
+Add menu button drawing function.
+Update layout calculations for menu height.
+Integrate menu rendering into notification display.
+
+Signed-off-by: LI Qingwu <Qing-wu.Li@leica-geosystems.com.cn>
+---
+ src/draw.c | 173 ++++++++++++++++++++++++++++++++++++++++++++++++++---
+ 1 file changed, 165 insertions(+), 8 deletions(-)
+
+diff --git a/src/draw.c b/src/draw.c
+index c91c38066..c8d53f8af 100644
+--- a/src/draw.c
++++ b/src/draw.c
+@@ -21,6 +21,7 @@
+ #include "settings.h"
+ #include "utils.h"
+ #include "icon-lookup.h"
++#include "menu.h"
+ 
+ struct colored_layout {
+         PangoLayout *l;
+@@ -36,6 +37,11 @@ window win;
+ 
+ PangoFontDescription *pango_fdesc;
+ 
++static int calculate_menu_height(const struct colored_layout *cl);
++static int calculate_max_button_width(const struct colored_layout *cl);
++static int calculate_menu_per_row(const struct colored_layout *cl);
++static int calculate_menu_rows(const struct colored_layout *cl);
++
+ // NOTE: Saves some characters
+ #define COLOR(cl, field) (cl)->n->colors.field
+ 
+@@ -233,6 +239,13 @@ static bool have_progress_bar(const struct colored_layout *cl)
+                         !cl->is_xmore);
+ }
+ 
++static bool have_built_in_menu(const struct colored_layout *cl)
++{
++        return (g_hash_table_size(cl->n->actions)>0 &&
++        settings.built_in_menu == true &&
++        !cl->is_xmore);
++}
++
+ static void get_text_size(PangoLayout *l, int *w, int *h, double scale) {
+         pango_layout_get_pixel_size(l, w, h);
+         // scale the size down, because it may be rendered at higher DPI
+@@ -321,6 +334,8 @@ static struct dimensions calculate_notification_dimensions(struct colored_layout
+         if (have_progress_bar(cl))
+                 dim.w = MAX(settings.progress_bar_min_width, dim.w);
+ 
++        dim.h += calculate_menu_height(cl);
++
+         dim.h = MAX(settings.height.min, dim.h);
+         dim.h = MIN(settings.height.max, dim.h);
+ 
+@@ -442,6 +457,10 @@ static struct colored_layout *layout_from_notification(cairo_t *c, struct notifi
+                 g_error_free(err);
+         }
+ 
++        if (have_built_in_menu(cl)) {
++                menu_init(n);
++        }
++
+         n->first_render = false;
+         return cl;
+ }
+@@ -502,7 +521,7 @@ static int layout_get_height(struct colored_layout *cl, double scale)
+ 
+         return (cl->n->icon_position == ICON_TOP && cl->n->icon)
+                 ? h_icon + h_text + h_progress_bar + vertical_padding
+-                : MAX(h_text, h_icon) + h_progress_bar;
++                : MAX(h_text, h_icon) + h_progress_bar + calculate_menu_height(cl);
+ }
+ 
+ /* Attempt to make internal radius more organic.
+@@ -699,6 +718,132 @@ void draw_rounded_rect(cairo_t *c, float x, float y, int width, int height, int
+         cairo_close_path(c);
+ }
+ 
++
++static int calculate_max_button_width(const struct colored_layout *cl)
++{
++        int buttons = menu_get_count(cl->n);
++        if (buttons == 0) {
++                return 0;
++        }
++        const PangoFontDescription *desc = pango_layout_get_font_description(cl->l);
++        const int fontsize = pango_font_description_get_size(desc) / PANGO_SCALE;
++        int max_text_width = 0;
++        for (int i = 0; i < buttons; i++) {
++                char *label = menu_get_label(cl->n, i);
++                if (!label) {
++                        continue;
++                }
++                int text_width = strlen(label) * fontsize;
++                if (text_width > max_text_width) {
++                        max_text_width = text_width;
++                }
++        }
++        max_text_width = MAX(settings.menu_min_width, max_text_width);
++        max_text_width = MIN(settings.menu_max_width, max_text_width);
++        return max_text_width;
++}
++
++static int calculate_menu_per_row(const struct colored_layout *cl)
++{
++        int menu_width = calculate_max_button_width(cl);
++        if (menu_width <= 0) {
++                return 0;
++        }
++
++        int menu_count = 300 / menu_width;
++        menu_count = MIN(settings.menu_max_per_row, menu_count);
++        return menu_count;
++}
++
++static int calculate_menu_rows(const struct colored_layout *cl)
++{
++        int buttons = menu_get_count(cl->n);
++        if (buttons <= 0) {
++                return 0;
++        }
++
++        int max_per_row = calculate_menu_per_row(cl);
++        if (max_per_row < 1) {
++                max_per_row = 1;
++        }
++
++        int needed_rows = (buttons + max_per_row - 1) / max_per_row;
++        return MIN(needed_rows, settings.menu_max_rows);
++}
++
++static int calculate_menu_height(const struct colored_layout *cl)
++{
++        if (have_built_in_menu(cl)) {
++                int rows = calculate_menu_rows(cl);
++                return settings.menu_height * rows + settings.padding * rows;
++        } else {
++                return 0;
++        }
++}
++
++static void draw_built_in_menu(cairo_t *c, struct colored_layout *cl, int area_x, int area_y, int area_width,
++                               int area_height, double scale)
++{
++        if (!have_built_in_menu(cl))
++                return;
++
++        int buttons = menu_get_count(cl->n);
++        if (buttons == 0) {
++                return;
++        }
++
++        int max_per_row = calculate_menu_per_row(cl);
++        int rows = calculate_menu_rows(cl);
++        int base_button_width = calculate_max_button_width(cl);
++
++        pango_layout_set_attributes(cl->l, NULL);
++        pango_layout_set_font_description(cl->l, NULL);
++        pango_layout_set_font_description(cl->l, pango_fdesc);
++        PangoAttrList *attr = pango_attr_list_new();
++        pango_layout_set_attributes(cl->l, attr);
++
++        for (int row = 0; row < rows; row++) {
++                int buttons_in_row = MIN(buttons - row * max_per_row, max_per_row);
++                base_button_width = (area_width - settings.padding * (buttons_in_row + 1)) / buttons_in_row;
++
++                for (int col = 0; col < buttons_in_row; col++) {
++                        int button_index = row * max_per_row + col;
++                        if (button_index >= buttons)
++                                break;
++
++                        char *label = menu_get_label(cl->n, button_index);
++                        if (!label)
++                                continue;
++
++                        int x = area_x + settings.padding + col * (base_button_width + settings.padding);
++                        int y = area_y + row * (settings.menu_height + settings.padding);
++                        menu_set_position(cl->n, button_index, x, y, base_button_width, settings.menu_height);
++
++                        cairo_set_source_rgb(c, settings.menu_frame_color.r, settings.menu_frame_color.g,
++                                             settings.menu_frame_color.b);
++                        cairo_set_line_width(c, settings.menu_frame_width);
++                        draw_rect(c, x, y, base_button_width, settings.menu_height, scale);
++
++                        if (settings.menu_frame_fill)
++                                cairo_fill(c);
++                        else
++                                cairo_stroke(c);
++
++                        pango_layout_set_text(cl->l, label, -1);
++
++                        int text_width, text_height;
++                        pango_layout_get_pixel_size(cl->l, &text_width, &text_height);
++                        double text_x = x + (base_button_width - text_width) / 2;
++                        double text_y = y + (settings.menu_height - text_height) / 2;
++
++                        cairo_set_source_rgba(c, COLOR(cl, fg.r), COLOR(cl, fg.g), COLOR(cl, fg.b), COLOR(cl, fg.a));
++                        cairo_move_to(c, text_x, text_y);
++                        pango_cairo_show_layout(c, cl->l);
++                }
++        }
++        pango_attr_list_unref(attr);
++}
++
+ static cairo_surface_t *render_background(cairo_surface_t *srf,
+                                           struct colored_layout *cl,
+                                           struct colored_layout *cl_next,
+@@ -784,10 +929,12 @@ static void render_content(cairo_t *c, struct colored_layout *cl, int width, int
+         layout_setup(cl, width, height, scale);
+ 
+         // NOTE: Includes paddings!
+-        int h_without_progress_bar = height;
+-        if (have_progress_bar(cl)) {
+-                h_without_progress_bar -= settings.progress_bar_height + settings.padding;
+-        }
++        int h_text_and_icon = height;
++        if (have_progress_bar(cl))
++                h_text_and_icon -= settings.progress_bar_height + settings.padding;
++
++        if (have_built_in_menu(cl))
++                h_text_and_icon -= calculate_menu_height(cl);
+ 
+         int text_h = 0;
+         if (!cl->n->hide_text) {
+@@ -799,9 +946,9 @@ static void render_content(cairo_t *c, struct colored_layout *cl, int width, int
+             text_y = settings.padding;
+ 
+         if (settings.vertical_alignment == VERTICAL_CENTER) {
+-                text_y = h_without_progress_bar / 2 - text_h / 2;
++                text_y = h_text_and_icon / 2 - text_h / 2;
+         } else if (settings.vertical_alignment == VERTICAL_BOTTOM) {
+-                text_y = h_without_progress_bar - settings.padding - text_h;
++                text_y = h_text_and_icon - settings.padding - text_h;
+                 if (text_y < 0) text_y = settings.padding;
+         } // else VERTICAL_TOP
+ 
+@@ -867,7 +1014,7 @@ static void render_content(cairo_t *c, struct colored_layout *cl, int width, int
+                 unsigned int frame_width = settings.progress_bar_frame_width,
+                              progress_width = MIN(width - 2 * settings.h_padding, settings.progress_bar_max_width),
+                              progress_height = settings.progress_bar_height - frame_width,
+-                             frame_y = h_without_progress_bar,
++                             frame_y = h_text_and_icon,
+                              progress_width_without_frame = progress_width - 2 * frame_width,
+                              progress_width_1 = progress_width_without_frame * progress / 100,
+                              progress_width_2 = progress_width_without_frame - 1,
+@@ -923,6 +1070,15 @@ static void render_content(cairo_t *c, struct colored_layout *cl, int width, int
+                                 scale, settings.progress_bar_corners);
+                 cairo_stroke(c);
+         }
++
++       if (have_built_in_menu(cl)) {
++                int y = h_text_and_icon;
++                if (have_progress_bar(cl)) {
++                        y += settings.progress_bar_height + settings.padding;
++                }
++                draw_built_in_menu(c, cl, 0, y, width, height, scale);
++        }
++
+ }
+ 
+ static struct dimensions layout_render(cairo_surface_t *srf,
+@@ -1043,6 +1199,7 @@ void draw(void)
+                 else if (!cl_next)
+                         corners |= (settings.corners & C_BOT) | _C_LAST;
+ 
++                cl_this->n->displayed_top = dim.y;
+                 dim = layout_render(image_surface, cl_this, cl_next, dim, corners);
+                 corners &= ~(C_TOP | _C_FIRST);
+         }
+
+From cb7044427762f8dac66ad197bd6f401c8ca9690b Mon Sep 17 00:00:00 2001
+From: LI Qingwu <Qing-wu.Li@leica-geosystems.com.cn>
+Date: Thu, 6 Feb 2025 16:50:36 +0800
+Subject: [PATCH 4/8] Implement built-in menu button click handling
+
+Add function to handle built-in menu clicks.
+Trigger action invocation on menu button click.
+
+Signed-off-by: LI Qingwu <Qing-wu.Li@leica-geosystems.com.cn>
+---
+ src/input.c | 23 +++++++++++++++++++++++
+ 1 file changed, 23 insertions(+)
+
+diff --git a/src/input.c b/src/input.c
+index 979778f04..f863b37ba 100644
+--- a/src/input.c
++++ b/src/input.c
+@@ -55,6 +55,24 @@ struct notification *get_notification_at(const int y) {
+         return NULL;
+ }
+ 
++bool handle_builtin_menu_click(int x, int y) {
++        if (!settings.built_in_menu) {
++                return false;
++        }
++
++        struct notification *n = get_notification_at(y);
++        if (n) {
++                if (menu_get_count(n) > 0) {
++                        struct menu *m = menu_get_at(n, x, y);
++                        if (m) {
++                                signal_action_invoked(n, m->key);
++                                return true;
++                        }
++                }
++        }
++        return false;
++}
++
+ void input_handle_click(unsigned int button, bool button_down, int mouse_x, int mouse_y){
+         LOG_I("Pointer handle button %i: %i", button, button_down);
+ 
+@@ -63,6 +81,11 @@ void input_handle_click(unsigned int button, bool button_down, int mouse_x, int
+                 return;
+         }
+ 
++        if (settings.built_in_menu){
++                if (handle_builtin_menu_click( mouse_x, mouse_y))
++                        return;
++        }
++
+         enum mouse_action *acts;
+ 
+         switch (button) {
+
+From bc5cb30175888d429675cc5065b18962f9a46afb Mon Sep 17 00:00:00 2001
+From: LI Qingwu <Qing-wu.Li@leica-geosystems.com.cn>
+Date: Thu, 6 Feb 2025 16:52:01 +0800
+Subject: [PATCH 5/8] Release resources for menu when invalidating actions
+
+Add menu_free_array call in notification_invalidate_actions,
+ensure proper cleanup of menu resources when invalidating actions
+
+Signed-off-by: LI Qingwu <Qing-wu.Li@leica-geosystems.com.cn>
+---
+ src/notification.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/src/notification.c b/src/notification.c
+index 7c4bcb46c..836b01313 100644
+--- a/src/notification.c
++++ b/src/notification.c
+@@ -808,6 +808,7 @@ void notification_open_context_menu(struct notification *n)
+ 
+ void notification_invalidate_actions(struct notification *n) {
+         g_hash_table_remove_all(n->actions);
++        menu_free_array(n);
+ }
+ 
+ void notification_keep_original(struct notification *n)
+
+From 0a2dcdc9ce5aade5c713d1fac1601c64083f15f5 Mon Sep 17 00:00:00 2001
+From: gujie <jie.gu@leica-geosystems.com.cn>
+Date: Mon, 24 Mar 2025 14:16:28 +0800
+Subject: [PATCH 6/8] Improve revise settings parameter in built-in menu
+
+- Revise fixed value with settings.width.max in built-in menu.
+- Revise 'h_padding' parameter to align with the offical definition
+ub built-in menu.
+
+Signed-off-by: gujie <jie.gu@leica-geosystems.com.cn>
+---
+ src/draw.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/src/draw.c b/src/draw.c
+index c8d53f8af..8103c9a25 100644
+--- a/src/draw.c
++++ b/src/draw.c
+@@ -750,7 +750,7 @@ static int calculate_menu_per_row(const struct colored_layout *cl)
+                 return 0;
+         }
+ 
+-        int menu_count = 300 / menu_width;
++        int menu_count = settings.width.max / menu_width;
+         menu_count = MIN(settings.menu_max_per_row, menu_count);
+         return menu_count;
+ }
+@@ -804,7 +804,7 @@ static void draw_built_in_menu(cairo_t *c, struct colored_layout *cl, int area_x
+ 
+         for (int row = 0; row < rows; row++) {
+                 int buttons_in_row = MIN(buttons - row * max_per_row, max_per_row);
+-                base_button_width = (area_width - settings.padding * (buttons_in_row + 1)) / buttons_in_row;
++                base_button_width = (area_width - settings.h_padding * (buttons_in_row + 1)) / buttons_in_row;
+ 
+                 for (int col = 0; col < buttons_in_row; col++) {
+                         int button_index = row * max_per_row + col;
+@@ -815,7 +815,7 @@ static void draw_built_in_menu(cairo_t *c, struct colored_layout *cl, int area_x
+                         if (!label)
+                                 continue;
+ 
+-                        int x = area_x + settings.padding + col * (base_button_width + settings.padding);
++                        int x = area_x + settings.h_padding + col * (base_button_width + settings.h_padding);
+                         int y = area_y + row * (settings.menu_height + settings.padding);
+                         menu_set_position(cl->n, button_index, x, y, base_button_width, settings.menu_height);
+ 
+
+From 0b9da7d962c7dd509d968ae52b6aef2bab38f238 Mon Sep 17 00:00:00 2001
+From: gujie <jie.gu@leica-geosystems.com.cn>
+Date: Tue, 25 Mar 2025 14:39:33 +0800
+Subject: [PATCH 7/8] Add support round corner menu in built-in menu
+
+Signed-off-by: gujie <jie.gu@leica-geosystems.com.cn>
+---
+ src/draw.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/draw.c b/src/draw.c
+index 8103c9a25..30f3c53f6 100644
+--- a/src/draw.c
++++ b/src/draw.c
+@@ -822,7 +822,7 @@ static void draw_built_in_menu(cairo_t *c, struct colored_layout *cl, int area_x
+                         cairo_set_source_rgb(c, settings.menu_frame_color.r, settings.menu_frame_color.g,
+                                              settings.menu_frame_color.b);
+                         cairo_set_line_width(c, settings.menu_frame_width);
+-                        draw_rect(c, x, y, base_button_width, settings.menu_height, scale);
++                        draw_rounded_rect(c, x, y, base_button_width, settings.menu_height, settings.corner_radius, scale, settings.corners);
+ 
+                         if (settings.menu_frame_fill)
+                                 cairo_fill(c);
+
+From d8af273a9a52610bb395da45d7af0b9547bc6382 Mon Sep 17 00:00:00 2001
+From: gujie <jie.gu@leica-geosystems.com.cn>
+Date: Tue, 20 May 2025 17:13:22 +0800
+Subject: [PATCH 8/8] Revise to use scale in draw built-in menu
+
+Signed-off-by: gujie <jie.gu@leica-geosystems.com.cn>
+---
+ src/draw.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/draw.c b/src/draw.c
+index 30f3c53f6..91c1e28a5 100644
+--- a/src/draw.c
++++ b/src/draw.c
+@@ -837,7 +837,7 @@ static void draw_built_in_menu(cairo_t *c, struct colored_layout *cl, int area_x
+                         double text_y = y + (settings.menu_height - text_height) / 2;
+ 
+                         cairo_set_source_rgba(c, COLOR(cl, fg.r), COLOR(cl, fg.g), COLOR(cl, fg.b), COLOR(cl, fg.a));
+-                        cairo_move_to(c, text_x, text_y);
++                        cairo_move_to(c, round(text_x * scale), round(text_y * scale));
+                         pango_cairo_show_layout(c, cl->l);
+                 }
+         }
+

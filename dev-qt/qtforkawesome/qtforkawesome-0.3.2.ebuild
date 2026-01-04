@@ -1,7 +1,7 @@
-# Copyright 1999-2022 Gentoo Authors
+# Copyright 1999-2024 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=7
+EAPI=8
 
 FORKAWESOME_PV="1.2.0"
 
@@ -17,21 +17,29 @@ SLOT="0"
 KEYWORDS="~amd64 ~x86"
 IUSE="static-libs"
 
-DEPEND="dev-perl/YAML-LibYAML
-	dev-qt/qtcore:5
-	dev-qt/qtgui:5
-	dev-libs/qtutilities"
+DEPEND="
+	dev-perl/YAML-LibYAML
+	dev-qt/qtutilities:=
+	dev-qt/qtbase:6=[gui]
+	dev-qt/qtdeclarative:6=
+"
 RDEPEND="${DEPEND}
 	media-libs/freetype:2[brotli]"
 
-RESTRICT="mirror"
+RESTRICT="mirror test"
 
 src_configure() {
 	local mycmakeargs=(
 		-DBUILD_SHARED_LIBS:BOOL=$(usex !static-libs)
-		-DBUILDIN_TRANSLATIONS:BOOL=ON
+		-DBUILTIN_TRANSLATIONS:BOOL=ON
 		-DFORK_AWESOME_FONT_FILE="${WORKDIR}/Fork-Awesome-${FORKAWESOME_PV}/fonts/forkawesome-webfont.woff2"
 		-DFORK_AWESOME_ICON_DEFINITIONS="${WORKDIR}/Fork-Awesome-${FORKAWESOME_PV}/src/icons/icons.yml"
+		-DCONFIGURATION_NAME:STRING="qt6"
+		-DCONFIGURATION_DISPLAY_NAME="Qt 6"
+		-DCONFIGURATION_TARGET_SUFFIX:STRING="qt6"
+		-DCONFIGURATION_PACKAGE_SUFFIX_QTUTILITIES:STRING="-qt6"
+		-DQT_PACKAGE_PREFIX:STRING='Qt6'
 	)
+
 	cmake_src_configure
 }
