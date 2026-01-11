@@ -1,4 +1,4 @@
-# Copyright 1999-2025 Gentoo Authors
+# Copyright 1999-2026 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
@@ -7,7 +7,7 @@ ECM_TEST="true"
 KDE_ORG_NAME="${PN}-kde"
 KDE_SELINUX_MODULE="${PN}"
 KFMIN=6.19.0
-QTMIN=6.9.1
+QTMIN=6.10.1
 inherit ecm flag-o-matic gear.kde.org xdg
 
 DESCRIPTION="Adds communication between KDE Plasma and your smartphone"
@@ -71,13 +71,11 @@ RDEPEND="${COMMON_DEPEND}
 	net-fs/sshfs
 "
 	#kde-plasma/libplasma:6
-RDEPEND+=" || ( >=dev-qt/qtbase-6.10:6[wayland] <dev-qt/qtwayland-6.10:6 )"
 BDEPEND="
 	>=dev-qt/qtbase-${QTMIN}:6[wayland]
 	dev-util/wayland-scanner
 	virtual/pkgconfig
 "
-BDEPEND+=" || ( >=dev-qt/qtbase-6.10:6[wayland] <dev-qt/qtwayland-6.10:6 )"
 
 src_configure() {
 	# -Werror=lto-type-mismatch

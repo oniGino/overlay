@@ -1,11 +1,48 @@
 --- 1/CMakeLists.txt	2025-12-03 14:33:58.000000000 -0800
-+++ 2/CMakeLists.txt	2026-01-04 12:41:42.390015784 -0800
-@@ -206,7 +206,7 @@
++++ 2/CMakeLists.txt	2026-01-05 11:41:23.373532359 -0800
+@@ -206,9 +206,7 @@
      else()
          find_package(Qt6Gui REQUIRED COMPONENTS Private)
      endif()
 -    set(HAVE_X11 TRUE)
-+    option(HAVE_X11 "Build against X11" TRUE)
- else()
-     set(HAVE_X11 FALSE)
+-else()
+-    set(HAVE_X11 FALSE)
++    option(HAVE_X11 "Build X11" TRUE)
  endif()
+ find_package(Phonon4Qt6 CONFIG)
+ set_okular_optional_package_properties(Phonon4Qt6 PROPERTIES
+
+--- 1/shell/shell.cpp	2025-12-03 14:33:58.000000000 -0800
++++ 2/shell/shell.cpp	2026-01-05 12:39:56.392692161 -0800
+@@ -28,7 +28,7 @@
+ #include <KRecentFilesAction>
+ #include <KSharedConfig>
+ #include <KStandardAction>
+-#if !defined(Q_OS_WIN) && !defined(Q_OS_OSX) && !defined(Q_OS_HAIKU)
++#if HAVE_X11
+ #include <KStartupInfo>
+ #include <KWindowInfo>
+ #endif
+@@ -448,7 +448,7 @@
+         return false;
+     }
+ 
+-#if !defined(Q_OS_WIN) && !defined(Q_OS_OSX) && !defined(Q_OS_HAIKU)
++#if HAVE_X11 
+     const KWindowInfo winfo(window()->effectiveWinId(), NET::WMDesktop);
+     if (winfo.desktop() != desktop) {
+         return false;
+@@ -723,9 +723,12 @@
+ #if !defined(Q_OS_WIN) && !defined(Q_OS_OSX) && !defined(Q_OS_HAIKU)
+     if (KWindowSystem::isPlatformWayland()) {
+         KWindowSystem::setCurrentXdgActivationToken(startupId);
+-    } else if (KWindowSystem::isPlatformX11()) {
++    }
++#if HAVE_X11
++    if (KWindowSystem::isPlatformX11()) {
+         KStartupInfo::setNewStartupId(window()->windowHandle(), startupId.toUtf8());
+     }
++#endif
+ #else
+     Q_UNUSED(startupId);
+ #endif

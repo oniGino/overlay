@@ -1,18 +1,18 @@
-# Copyright 1999-2025 Gentoo Authors
+# Copyright 1999-2026 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
 
 ECM_TEST="forceoptional"
 KFMIN=6.18.0
-QTMIN=6.9.1
+QTMIN=6.10.1
 inherit ecm plasma.kde.org xdg
 
 DESCRIPTION="Backend implementation for xdg-desktop-portal that is using Qt/KDE Frameworks"
 
 LICENSE="LGPL-2+"
 SLOT="6"
-KEYWORDS="~amd64"
+KEYWORDS="~amd64 ~arm64 ~loong ~ppc64 ~riscv ~x86"
 IUSE="plasma"
 
 # dev-qt/qtbase:= slot op: Uses Qt::GuiPrivate for qtx11extras_p.h
@@ -53,13 +53,10 @@ RDEPEND="${COMMON_DEPEND}
 	kde-misc/kio-fuse:6
 	sys-apps/xdg-desktop-portal
 "
-RDEPEND+=" || ( >=dev-qt/qtbase-6.10:6[wayland] <dev-qt/qtwayland-6.10:6 )"
-
 BDEPEND="
 	>=dev-qt/qtbase-${QTMIN}:6[wayland]
 	virtual/pkgconfig
 "
-BDEPEND+=" || ( >=dev-qt/qtbase-6.10:6[wayland] <dev-qt/qtwayland-6.10:6 )"
 
 CMAKE_SKIP_TESTS=(
 	# bugs: 926483, wants dbus/X11

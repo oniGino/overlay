@@ -1,11 +1,11 @@
-# Copyright 1999-2025 Gentoo Authors
+# Copyright 1999-2026 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
 
 ECM_QTHELP="false"
 ECM_TEST="forceoptional"
-QTMIN=6.7.2
+QTMIN=6.10.1
 inherit ecm frameworks.kde.org optfeature xdg
 
 DESCRIPTION="Library for providing abstractions to get the developer's purposes fulfilled"
@@ -35,6 +35,8 @@ DEPEND="
 "
 RDEPEND="${DEPEND}
 	>=kde-frameworks/kdeclarative-${KDE_CATV}:6
+	=kde-frameworks/kitemmodels-${KDE_CATV}*:6
+	qrcode? ( =kde-frameworks/prison-${KDE_CATV}*:6[qml] )
 	bluetooth? ( =kde-frameworks/bluez-qt-${KDE_CATV}*:6 )
 	webengine? (
 		>=kde-frameworks/purpose-kaccounts-services-${KDE_CATV}
@@ -47,7 +49,7 @@ src_prepare() {
 	ecm_src_prepare
 
 	use bluetooth ||
-		cmake_run_in src/plugins cmake_comment_add_subdirectory bluetooth
+		cmake_comment_add_subdirectory -f src/plugins bluetooth
 }
 
 src_configure() {

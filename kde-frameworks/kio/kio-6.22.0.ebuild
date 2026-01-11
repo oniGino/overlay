@@ -1,4 +1,4 @@
-# Copyright 1999-2025 Gentoo Authors
+# Copyright 1999-2026 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
@@ -7,7 +7,7 @@ ECM_DESIGNERPLUGIN="true"
 ECM_HANDBOOK="optional"
 ECM_HANDBOOK_DIR="docs"
 ECM_TEST="forceoptional"
-QTMIN=6.8.1
+QTMIN=6.10.1
 inherit ecm frameworks.kde.org xdg
 
 DESCRIPTION="Framework providing transparent file and data management"
