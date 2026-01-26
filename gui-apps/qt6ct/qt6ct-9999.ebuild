@@ -16,7 +16,7 @@ fi
 
 LICENSE="BSD-2"
 SLOT="0"
-KEYWORDS="amd64"
+KEYWORDS="~amd64"
 
 # uses Qt private APIs wrt :=
 # dlopen: qtsvg
