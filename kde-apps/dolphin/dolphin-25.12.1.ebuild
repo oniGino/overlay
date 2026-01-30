@@ -16,8 +16,7 @@ HOMEPAGE="https://apps.kde.org/dolphin/ https://userbase.kde.org/Dolphin"
 LICENSE="GPL-2" # TODO: CHECK
 SLOT="6"
 KEYWORDS="~amd64 ~arm64 ~loong ~ppc64 ~riscv ~x86"
-IUSE="semantic-desktop telemetry X"
-
+IUSE="semantic-desktop telemetry X +thumbnail"
 # slot op: Uses Qt::GuiPrivate for qtx11extras_p.h
 DEPEND="
 	>=dev-qt/qtbase-${QTMIN}:6=[concurrent,dbus,gui,widgets,X?,xml]
@@ -55,8 +54,10 @@ DEPEND="
 	telemetry? ( >=kde-frameworks/kuserfeedback-${KFMIN}:6 )
 "
 RDEPEND="${DEPEND}
-	>=kde-apps/kio-extras-${PVCUT}:6
-	>=kde-apps/thumbnailers-${PVCUT}:6
+	thumbnail? (
+		>=kde-apps/thumbnailers-${PVCUT}:6
+		>=kde-apps/kio-extras-${PVCUT}:6
+	)
 "
 
 PATCHES=( "${FILESDIR}/x11.patch" )
