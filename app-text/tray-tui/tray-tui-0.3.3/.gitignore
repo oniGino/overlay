@@ -1,7 +1,0 @@
-debug/
-target/
-*.log
-**/*.rs.bk
-*.pdb
-aur/
-
