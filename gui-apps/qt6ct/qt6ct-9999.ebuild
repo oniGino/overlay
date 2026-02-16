@@ -1,31 +1,27 @@
-# Copyright 2023 Gentoo Authors
+# Copyright 2023-2025 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
 
 inherit cmake
 
-DESCRIPTION="Qt6 Configuration Tool (for DE/WM without Qt integration) - with KDE Color Support"
-HOMEPAGE="https://www.opencode.net/trialuser/qt6ct"
-if [ ${PV} == 9999 ]; then
+DESCRIPTION="Qt6 Configuration Tool (for DE/WM without Qt integration)"
+HOMEPAGE="https://www.opencode.net/trialuser/qt6ct/"
+if [[ "${PV}" == "9999" ]]; then
 	inherit git-r3
-	EGIT_REPO_URI="https://www.github.com/oniGino/qt6ct.git"
+	EGIT_REPO_URI="https://www.opencode.net/trialuser/qt6ct.git"
 else
-	SRC_URI="https://www.opencode.net/trialuser/qt6ct/-/archive/${PV}/${P}.tar.bz2"
+	SRC_URI="https://www.opencode.net/api/v4/projects/5459/packages/generic/qt6ct/${PV}/${P}.tar.xz"
 fi
 
 LICENSE="BSD-2"
 SLOT="0"
-KEYWORDS="amd64"
+KEYWORDS="~amd64"
 
 # uses Qt private APIs wrt :=
+# dlopen: qtsvg
 DEPEND="
 	dev-qt/qtbase:6=[gui,widgets]
-	dev-qt/qtdeclarative:6
-	kde-frameworks/kconfig:6
-	kde-frameworks/kcolorscheme:6
-	kde-frameworks/kiconthemes:6
-	kde-frameworks/qqc2-desktop-style:6
 "
 RDEPEND="
 	${DEPEND}
@@ -36,17 +32,26 @@ BDEPEND="
 	dev-qt/qttools:6[linguist]
 "
 
+src_install() {
+	cmake_src_install
+
+	# can replace after qt5ct is gone
+#	newenvd - 98${PN} <<<'QT_QPA_PLATFORMTHEME=qt6ct'
+	newenvd - 98${PN} <<-EOF
+		# 'qt5ct' is recognized by both qt5ct and qt6ct to allow simultaneous usage
+		QT_QPA_PLATFORMTHEME=qt5ct
+	EOF
+}
+
 pkg_postinst() {
 	if [[ ! ${REPLACING_VERSIONS} ]]; then
-		elog "Note need to export QT_QPA_PLATFORMTHEME=qt6ct in the used environment"
-		elog "for theming to take effect (not done automatically, may want to set in"
-		elog "the HOME's shell initialization scripts, or use /etc/env.d followed by"
-		elog "running env-update then re-login)."
 		elog
-		elog "If also using x11-misc/qt5ct, =qt5ct is alternatively recognized so it"
-		elog "can be activated for both Qt5 and Qt6 at once."
+		elog "QT_QPA_PLATFORMTHEME has been set to enable ${PN} usage by"
+		elog "default. This will only come into effect after re-login into"
+		elog "the current desktop session(s)."
 		elog
-		elog "Try disabling if experience startup crashes for some applications,"
-		elog "may still be unstable (especially with newly released Qt versions)."
+		elog "Note that ${PN} should typically not be used with DEs that do"
+		elog "their own integration (e.g. Plasma/KDE). Qt also has special"
+		elog "handling for Gnome which may or may not be better."
 	fi
 }
