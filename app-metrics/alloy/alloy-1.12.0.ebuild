@@ -31,7 +31,7 @@ src_prepare() {
 }
 
 src_compile() {
-	ego build alloy
+	ego build -o build/alloy .
 }
 
 src_install() {
