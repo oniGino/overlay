@@ -13,11 +13,15 @@ HOMEPAGE="
 	https://github.com/LukashonakV/cava
 "
 
-#SRC_URI="https://github.com/karlstav/cava/releases/download/${PV}/${P}.tar.gz"
-SRC_URI="https://github.com/LukashonakV/cava/archive/refs/tags/${PV}.tar.gz"
+RESTRICT="mirror"
+MY_PV="${PV}-beta"
+
+SRC_URI="https://github.com/LukashonakV/cava/archive/refs/tags/v${MY_PV}.tar.gz -> ${P}.tar.gz"
+
+S="${WORKDIR}/${PN}-${MY_PV}"
 
 LICENSE="MIT Unlicense"
-SLOT="0"
+SLOT="lukashonakV"
 KEYWORDS="amd64 x86"
 IUSE="alsa jack +ncurses pipewire portaudio pulseaudio sdl sndio"
 
