@@ -298,7 +298,7 @@ SRC_URI="
 "
 
 LICENSE="GPL-3 MIT 0BSD Apache-2.0 Apache-2.0-with-LLVM-exceptions BSD CC0-1.0 GPL-3+ ISC MIT MIT-0 MPL-2.0 Unicode-DFS-2016 Unlicense ZLIB"
-IUSE="avif +man bash-completion fish-completion"
+IUSE="avif +man bash-completion fish-completion zsh-completion"
 SLOT="0"
 KEYWORDS="~amd64"
 
