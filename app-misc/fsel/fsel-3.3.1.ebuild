@@ -232,3 +232,11 @@ LICENSE+="
 "
 SLOT="0"
 KEYWORDS="~amd64"
+DOCS="USAGE.md README.md LICENSE config.toml"
+
+src_install() {
+	default
+	cargo_src_install
+	doman ${PN}.1
+}
+
