@@ -9,6 +9,8 @@ DESCRIPTION="Qt6 Configuration Tool (for DE/WM without Qt integration)"
 HOMEPAGE="https://www.opencode.net/trialuser/qt6ct/"
 SRC_URI="https://www.opencode.net/api/v4/projects/5459/packages/generic/qt6ct/${PV}/${P}.tar.xz"
 
+PATCHES=("${FILESDIR}/${PN}-kde.patch")
+
 LICENSE="BSD-2"
 SLOT="0"
 KEYWORDS="amd64"
@@ -17,6 +19,10 @@ KEYWORDS="amd64"
 # dlopen: qtsvg
 DEPEND="
 	dev-qt/qtbase:6=[gui,widgets]
+	kde-frameworks/kcolorscheme
+	kde-frameworks/kconfig
+	kde-frameworks/kiconthemes
+	kde-frameworks/qqc2-desktop-style
 "
 RDEPEND="
 	${DEPEND}
