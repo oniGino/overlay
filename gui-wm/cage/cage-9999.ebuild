@@ -23,7 +23,7 @@ IUSE="+man"
 
 RDEPEND="
 	>=dev-libs/wayland-protocols-1.14
-	>=gui-libs/wlroots-0.19
+	>=gui-libs/wlroots-0.20
 	dev-libs/wayland
 	sys-libs/glibc
 	x11-libs/libxkbcommon

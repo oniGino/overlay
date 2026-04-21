@@ -25,4 +25,9 @@ DEPEND="
 	faad? ( media-libs/faad2 )
 	"
 
-PATCHES=( "${FILESDIR}/64.patch" )
+src_install() {
+    # We explicitly tell make that PREFIX should be /usr
+    # and DESTDIR is the temporary sandbox (ED is 'EPREFIX/D')
+    emake DESTDIR="${D}" PREFIX="/usr" install
+}
+
