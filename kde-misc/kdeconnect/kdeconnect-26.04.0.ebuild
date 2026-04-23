@@ -6,7 +6,7 @@ EAPI=8
 ECM_TEST="true"
 KDE_ORG_NAME="${PN}-kde"
 KDE_SELINUX_MODULE="${PN}"
-KFMIN=6.19.0
+KFMIN=6.22.0
 QTMIN=6.10.1
 inherit ecm flag-o-matic gear.kde.org xdg
 
@@ -16,7 +16,7 @@ HOMEPAGE="https://kdeconnect.kde.org/ https://apps.kde.org/kdeconnect/"
 LICENSE="GPL-2+"
 SLOT="6"
 KEYWORDS="~amd64 ~arm64 ~ppc64 ~x86"
-IUSE="bluetooth pulseaudio telephony zeroconf X"
+IUSE="bluetooth pulseaudio telephony zeroconf X sharedinput"
 
 RESTRICT="test"
 
@@ -58,6 +58,7 @@ COMMON_DEPEND="
 		x11-libs/libX11
 		x11-libs/libXtst
 	)
+	sharedinput? ( dev-libs/libei )
 "
 DEPEND="${COMMON_DEPEND}
 	dev-libs/wayland-protocols
@@ -76,7 +77,14 @@ BDEPEND="
 	dev-util/wayland-scanner
 	virtual/pkgconfig
 "
+src_prepare() {
+	default
 
+	ecm_src_prepare
+
+	use sharedinput ||
+		cmake_comment_add_subdirectory -f plugins shareinputdevices mousepad
+}
 src_configure() {
 	# -Werror=lto-type-mismatch
 	# https://bugs.gentoo.org/921648
