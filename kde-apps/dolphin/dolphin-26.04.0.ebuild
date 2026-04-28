@@ -6,8 +6,8 @@ EAPI=8
 ECM_HANDBOOK="optional"
 ECM_TEST="true"
 PVCUT=$(ver_cut 1-3)
-KFMIN=6.19.0
-QTMIN=6.9.1
+KFMIN=6.23.0
+QTMIN=6.10.1
 inherit ecm gear.kde.org optfeature xdg
 
 DESCRIPTION="Plasma filemanager focusing on usability"
@@ -62,6 +62,15 @@ RDEPEND="${DEPEND}
 
 PATCHES=( "${FILESDIR}/x11.patch" )
 
+CMAKE_SKIP_TESTS=(
+	servicemenuinstaller # requires ruby, no thanks
+	dolphinmainwindowtest # hangs forever
+	kfileitem{listview,model}test # hang forever
+	kitemlistcontrollertest # hangs forever
+	kitemlistcontrollerexpandtest # flaky even according to upstream # bug 947223
+	placesitemmodeltest # requires DBus
+)
+
 src_configure() {
 	local mycmakeargs=(
 		-DHAVE_X11=$(use X)
@@ -74,16 +83,6 @@ src_configure() {
 		-DCMAKE_DISABLE_FIND_PACKAGE_SeleniumWebDriverATSPI=ON # not packaged
 	)
 	ecm_src_configure
-}
-
-src_test() {
-	local myctestargs=(
-		# servicemenuinstaller requires ruby, no thanks
-		# dolphinmainwindowtest, kitemlistcontrollertest, kfileitemlistviewtest, kfileitemmodeltest hang forever
-		# placesitemmodeltest requires DBus
-		-E "(servicemenuinstaller|dolphinmainwindowtest|kfileitemlistviewtest|kfileitemmodeltest|kitemlistcontrollertest|placesitemmodeltest)"
-	)
-	ecm_src_test
 }
 
 pkg_postinst() {
