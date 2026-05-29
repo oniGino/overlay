@@ -1,17 +1,18 @@
+EAPI=8
 
-EAPI="8"
 
-inherit go-module go-env
+inherit go-module
 
-SRC_URI="https://github.com/Cladamos/clawea/archive/refs/tags/v${PV}.tar.gz -> ${P}.tar.gz"
-HOMEPAGE="https://github.com/Cladamos/clawea/"
+SRC_URI="https://github.com/SuperCoolPencil/cue/archive/refs/tags/v${PV}.tar.gz -> ${P}.gh.tar.gz"
 RESTRICT="mirror"
 SLOT="0"
 KEYWORDS="~amd64"
 
 EGO_SUM=(
-	"github.com/NimbleMarkets/ntcharts v0.4.0"
-	"github.com/NimbleMarkets/ntcharts v0.4.0/go.mod"
+	"github.com/Microsoft/go-winio v0.6.2"
+	"github.com/Microsoft/go-winio v0.6.2/go.mod"
+	"github.com/atotto/clipboard v0.1.4"
+	"github.com/atotto/clipboard v0.1.4/go.mod"
 	"github.com/aymanbagabas/go-osc52/v2 v2.0.1"
 	"github.com/aymanbagabas/go-osc52/v2 v2.0.1/go.mod"
 	"github.com/charmbracelet/bubbles v0.21.0"
@@ -28,12 +29,24 @@ EGO_SUM=(
 	"github.com/charmbracelet/x/cellbuf v0.0.13-0.20250311204145-2c3ea96c31dd/go.mod"
 	"github.com/charmbracelet/x/term v0.2.1"
 	"github.com/charmbracelet/x/term v0.2.1/go.mod"
-	"github.com/davecgh/go-spew v1.1.0/go.mod"
+	"github.com/davecgh/go-spew v1.1.1"
 	"github.com/davecgh/go-spew v1.1.1/go.mod"
 	"github.com/erikgeiser/coninput v0.0.0-20211004153227-1c3628e74d0f"
 	"github.com/erikgeiser/coninput v0.0.0-20211004153227-1c3628e74d0f/go.mod"
-	"github.com/lrstanley/bubblezone v0.0.0-20240914071701-b48c55a5e78e"
-	"github.com/lrstanley/bubblezone v0.0.0-20240914071701-b48c55a5e78e/go.mod"
+	"github.com/frankban/quicktest v1.14.6"
+	"github.com/frankban/quicktest v1.14.6/go.mod"
+	"github.com/fsnotify/fsnotify v1.9.0"
+	"github.com/fsnotify/fsnotify v1.9.0/go.mod"
+	"github.com/go-viper/mapstructure/v2 v2.4.0"
+	"github.com/go-viper/mapstructure/v2 v2.4.0/go.mod"
+	"github.com/google/go-cmp v0.6.0"
+	"github.com/google/go-cmp v0.6.0/go.mod"
+	"github.com/kr/pretty v0.3.1"
+	"github.com/kr/pretty v0.3.1/go.mod"
+	"github.com/kr/text v0.2.0"
+	"github.com/kr/text v0.2.0/go.mod"
+	"github.com/kylelemons/godebug v1.1.0"
+	"github.com/kylelemons/godebug v1.1.0/go.mod"
 	"github.com/lucasb-eyer/go-colorful v1.2.0"
 	"github.com/lucasb-eyer/go-colorful v1.2.0/go.mod"
 	"github.com/mattn/go-isatty v0.0.20"
@@ -48,33 +61,55 @@ EGO_SUM=(
 	"github.com/muesli/cancelreader v0.2.2/go.mod"
 	"github.com/muesli/termenv v0.16.0"
 	"github.com/muesli/termenv v0.16.0/go.mod"
+	"github.com/pelletier/go-toml/v2 v2.2.4"
+	"github.com/pelletier/go-toml/v2 v2.2.4/go.mod"
+	"github.com/pmezard/go-difflib v1.0.0"
 	"github.com/pmezard/go-difflib v1.0.0/go.mod"
 	"github.com/rivo/uniseg v0.2.0/go.mod"
 	"github.com/rivo/uniseg v0.4.7"
 	"github.com/rivo/uniseg v0.4.7/go.mod"
-	"github.com/stretchr/objx v0.1.0/go.mod"
-	"github.com/stretchr/objx v0.4.0/go.mod"
-	"github.com/stretchr/objx v0.5.0/go.mod"
-	"github.com/stretchr/objx v0.5.2/go.mod"
-	"github.com/stretchr/testify v1.7.1/go.mod"
-	"github.com/stretchr/testify v1.8.0/go.mod"
-	"github.com/stretchr/testify v1.8.4/go.mod"
+	"github.com/rogpeppe/go-internal v1.9.0"
+	"github.com/rogpeppe/go-internal v1.9.0/go.mod"
+	"github.com/sagikazarmark/locafero v0.11.0"
+	"github.com/sagikazarmark/locafero v0.11.0/go.mod"
+	"github.com/sahilm/fuzzy v0.1.1"
+	"github.com/sahilm/fuzzy v0.1.1/go.mod"
+	"github.com/sourcegraph/conc v0.3.1-0.20240121214520-5f936abd7ae8"
+	"github.com/sourcegraph/conc v0.3.1-0.20240121214520-5f936abd7ae8/go.mod"
+	"github.com/spf13/afero v1.15.0"
+	"github.com/spf13/afero v1.15.0/go.mod"
+	"github.com/spf13/cast v1.10.0"
+	"github.com/spf13/cast v1.10.0/go.mod"
+	"github.com/spf13/pflag v1.0.10"
+	"github.com/spf13/pflag v1.0.10/go.mod"
+	"github.com/spf13/viper v1.21.0"
+	"github.com/spf13/viper v1.21.0/go.mod"
 	"github.com/stretchr/testify v1.11.1"
 	"github.com/stretchr/testify v1.11.1/go.mod"
+	"github.com/subosito/gotenv v1.6.0"
+	"github.com/subosito/gotenv v1.6.0/go.mod"
 	"github.com/xo/terminfo v0.0.0-20220910002029-abceb7e1c41e"
 	"github.com/xo/terminfo v0.0.0-20220910002029-abceb7e1c41e/go.mod"
+	"go.etcd.io/bbolt v1.4.3"
+	"go.etcd.io/bbolt v1.4.3/go.mod"
+	"go.yaml.in/yaml/v3 v3.0.4"
+	"go.yaml.in/yaml/v3 v3.0.4/go.mod"
 	"golang.org/x/exp v0.0.0-20220909182711-5c715a9e8561"
 	"golang.org/x/exp v0.0.0-20220909182711-5c715a9e8561/go.mod"
+	"golang.org/x/sync v0.16.0"
+	"golang.org/x/sync v0.16.0/go.mod"
 	"golang.org/x/sys v0.0.0-20210809222454-d867a43fc93e/go.mod"
 	"golang.org/x/sys v0.6.0/go.mod"
-	"golang.org/x/sys v0.36.0"
-	"golang.org/x/sys v0.36.0/go.mod"
-	"golang.org/x/text v0.20.0"
-	"golang.org/x/text v0.20.0/go.mod"
+	"golang.org/x/sys v0.40.0"
+	"golang.org/x/sys v0.40.0/go.mod"
+	"golang.org/x/term v0.39.0"
+	"golang.org/x/term v0.39.0/go.mod"
+	"golang.org/x/text v0.28.0"
+	"golang.org/x/text v0.28.0/go.mod"
 	"gopkg.in/check.v1 v0.0.0-20161208181325-20d25e280405/go.mod"
-	"gopkg.in/ini.v1 v1.67.1"
-	"gopkg.in/ini.v1 v1.67.1/go.mod"
-	"gopkg.in/yaml.v3 v3.0.0-20200313102051-9f266ea9e77c/go.mod"
+	"gopkg.in/check.v1 v1.0.0-20190902080502-41f04d3bba15"
+	"gopkg.in/check.v1 v1.0.0-20190902080502-41f04d3bba15/go.mod"
+	"gopkg.in/yaml.v3 v3.0.1"
 	"gopkg.in/yaml.v3 v3.0.1/go.mod"
 )
 
@@ -83,12 +118,15 @@ SRC_URI+="${EGO_SUM_SRC_URI}"
 
 LICENSE="MIT"
 
+DOCS="README.md config.example.yaml"
+
 src_compile() {
-	go-env_set_compile_environment
-	ego build
+    go-env_set_compile_environment
+    ego build
 }
 
 src_install() {
-	dobin ${PN}
+    dobin ${PN}
+	default
 }
 
