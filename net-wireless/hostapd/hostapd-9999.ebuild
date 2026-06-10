@@ -133,12 +133,9 @@ src_configure() {
 	einfo "Enabling drivers: "
 
 	# drivers
-	echo "CONFIG_DRIVER_HOSTAP=y" >> "${CONFIG}" || die
-	einfo "  HostAP driver enabled"
-	echo "CONFIG_DRIVER_WIRED=y" >> "${CONFIG}" || die
-	einfo "  Wired driver enabled"
-	echo "CONFIG_DRIVER_NONE=y" >> "${CONFIG}" || die
-	einfo "  None driver enabled"
+	echo "CONFIG_DRIVER_HOSTAP=n" >> "${CONFIG}" || die
+	echo "CONFIG_DRIVER_WIRED=n" >> "${CONFIG}" || die
+	echo "CONFIG_DRIVER_NONE=n" >> "${CONFIG}" || die
 
 	einfo "  nl80211 driver enabled"
 	echo "CONFIG_DRIVER_NL80211=y" >> "${CONFIG}" || die
@@ -149,8 +146,9 @@ src_configure() {
 	# misc
 	echo "CONFIG_DEBUG_FILE=y" >> "${CONFIG}" || die
 	echo "CONFIG_PKCS12=y" >> "${CONFIG}" || die
-	echo "CONFIG_RADIUS_SERVER=y" >> "${CONFIG}" || die
+	echo "CONFIG_RADIUS_SERVER=n" >> "${CONFIG}" || die
 	echo "CONFIG_IAPP=y" >> "${CONFIG}" || die
+	echo "CONFIG_MESH=y"  >> "${CONFIG}" || die
 	echo "CONFIG_IEEE80211BE=y" >> "${CONFIG}" || die
 	echo "CONFIG_IEEE80211R=y" >> "${CONFIG}" || die
 	echo "CONFIG_IEEE80211W=y" >> "${CONFIG}" || die
