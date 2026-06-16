@@ -2,7 +2,7 @@
 
 EAPI=8
 
-PYTHON_COMPAT=( python3_{9..13} )
+PYTHON_COMPAT=( python3_{11..14} )
 PYTHON_REQ_USE="sqlite"
 DISTUTILS_EXT=1
 DISTUTILS_USE_PEP517=standalone
