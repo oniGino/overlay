@@ -1,9 +1,9 @@
-# Copyright 1999-2025 Gentoo Authors
+# Copyright 1999-2026 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
 
-PYTHON_COMPAT=( python3_{10..13} )
+PYTHON_COMPAT=( python3_{12..15} )
 inherit python-single-r1 cmake flag-o-matic
 
 DESCRIPTION="Open source multimedia framework for television broadcasting"
@@ -12,27 +12,30 @@ SRC_URI="https://github.com/mltframework/${PN}/releases/download/v${PV}/${P}.tar
 
 LICENSE="GPL-3"
 SLOT="0/7"
-KEYWORDS="amd64 arm64 ~ppc64 ~riscv ~x86 ~amd64-linux ~x86-linux"
-IUSE="debug ffmpeg frei0r gtk jack libsamplerate opencv opengl python qt6 rtaudio rubberband sdl test vdpau vidstab X xine xml"
+KEYWORDS="amd64 arm64 ~loong ~ppc64 ~riscv ~x86"
 
+IUSE="debug ffmpeg frei0r gtk jack libsamplerate opencv opengl python qt6
+rtaudio rubberband sdl sox test vdpau vidstab vorbis X xine xml"
 REQUIRED_USE="python? ( ${PYTHON_REQUIRED_USE} )"
 
-# Needs unpackaged 'kwalify'
-RESTRICT="test"
+RESTRICT="!test? ( test )"
 
 # rtaudio will use OSS on non linux OSes
 # Qt already needs FFTW/PLUS so let's just always have it on to ensure
 # MLT is useful: bug #603168.
-DEPEND="
+RDEPEND="
 	>=media-libs/libebur128-1.2.2:=
 	sci-libs/fftw:3.0=
 	ffmpeg? ( media-video/ffmpeg:0=[vdpau?] )
 	frei0r? ( media-plugins/frei0r-plugins )
 	gtk? (
+		media-libs/fontconfig
 		media-libs/libexif
+		x11-libs/gdk-pixbuf:2
 		x11-libs/pango
 	)
 	jack? (
+		dev-libs/glib:2
 		>=dev-libs/libxml2-2.5:=
 		media-libs/ladspa-sdk
 		virtual/jack
@@ -51,14 +54,13 @@ DEPEND="
 	)
 	python? ( ${PYTHON_DEPS} )
 	qt6? (
-		dev-qt/qt5compat:6
 		dev-qt/qtbase:6[gui,network,opengl,widgets,xml]
 		dev-qt/qtsvg:6
 		media-libs/libexif
 		X? ( x11-libs/libX11 )
 	)
 	rtaudio? (
-		>=media-libs/rtaudio-4.1.2
+		>=media-libs/rtaudio-4.1.2:=
 		kernel_linux? ( media-libs/alsa-lib )
 	)
 	rubberband? ( media-libs/rubberband:= )
@@ -66,7 +68,9 @@ DEPEND="
 		media-libs/libsdl2[X?,opengl,video]
 		media-libs/sdl2-image
 	)
+	sox? ( media-sound/sox:= )
 	vidstab? ( media-libs/vidstab )
+	vorbis? ( media-libs/libvorbis )
 	xine? ( >=media-libs/xine-lib-1.1.2_pre20060328-r7 )
 	xml? ( >=dev-libs/libxml2-2.5:= )
 "
@@ -74,9 +78,10 @@ DEPEND="
 #	perl? ( dev-lang/perl )
 #	php? ( dev-lang/php )
 #	ruby? ( ${RUBY_DEPS} )
-#	sox? ( media-sound/sox )
 #	tcl? ( dev-lang/tcl:0= )
-RDEPEND="${DEPEND}"
+DEPEND="${RDEPEND}
+	test? ( dev-qt/qtbase:6 )
+"
 BDEPEND="
 	virtual/pkgconfig
 	python? ( >=dev-lang/swig-2.0 )
@@ -102,6 +107,9 @@ src_prepare() {
 		python_fix_shebang src/swig/python
 	fi
 
+	# Workaround kwalify dependency. Its not required on MSVC, we can ignore it as well.
+	sed -e '/find_package(Kwalify/ s/REQUIRED//' -i CMakeLists.txt || die
+
 	cmake_src_prepare
 }
 
@@ -109,34 +117,43 @@ src_configure() {
 	# Workaround for bug #919981
 	append-ldflags $(test-flags-CCLD -Wl,--undefined-version)
 
+	# match order in CMakeLists.txt
 	local mycmakeargs=(
 		-DCMAKE_SKIP_RPATH=ON
-		-DCLANG_FORMAT=OFF
+
 		-DGPL=ON
 		-DGPL3=ON
-		-DMOD_QT=OFF
-		-DMOD_GLAXNIMATE=OFF
-		-DMOD_KDENLIVE=ON
-		-DMOD_PLUS=ON
-		-DMOD_SDL1=OFF
-		-DMOD_SOX=OFF
-		-DMOD_SPATIALAUDIO=OFF # TODO: package libspatialaudio
-		-DUSE_LV2=OFF	# TODO
-		-DUSE_VST2=OFF	# TODO
+		-DBUILD_TESTING=$(usex test)
+		-DCLANG_FORMAT=OFF
+		-DBUILD_TESTS_WITH_QT6=ON # The tests use qttest, this switch decides whether qt5 or qt6 is used.
+
 		-DMOD_AVFORMAT=$(usex ffmpeg)
+		#-DMOD_DECKLINK=
 		-DMOD_FREI0R=$(usex frei0r)
 		-DMOD_GDK=$(usex gtk)
-		-DMOD_JACKRACK=$(usex jack)
-		-DMOD_RESAMPLE=$(usex libsamplerate)
-		-DMOD_OPENCV=$(usex opencv)
-		-DMOD_MOVIT=$(usex opengl)
-		-DMOD_QT6=$(usex qt6)
 		-DMOD_GLAXNIMATE_QT6=$(usex qt6)
+		-DMOD_JACKRACK=$(usex jack)
+		-DUSE_LV2=OFF	# TODO
+		-DUSE_VST2=OFF	# TODO
+		-DMOD_KDENLIVE=ON
+		-DMOD_MOVIT=$(usex opengl)
+		#-DMOD_NDI=
+		#-DMOD_NORMALIZE=
+		#-DMOD_OLDFILM=
+		-DMOD_OPENCV=$(usex opencv)
+		# -DMOD_OPENFX=
+		-DMOD_PLUS=ON
+		#-DMOD_PLUSGPL=
+		-DMOD_QT6=$(usex qt6)
+		-DMOD_RESAMPLE=$(usex libsamplerate)
 		-DMOD_RTAUDIO=$(usex rtaudio)
 		-DMOD_RUBBERBAND=$(usex rubberband)
+		-DMOD_SDL1=OFF
 		-DMOD_SDL2=$(usex sdl)
-		-DBUILD_TESTING=OFF # Needs unpackaged 'kwalify'; restricted anyway.
+		-DMOD_SOX=$(usex sox)
+		-DMOD_SPATIALAUDIO=OFF # TODO: package libspatialaudio
 		-DMOD_VIDSTAB=$(usex vidstab)
+		-DMOD_VORBIS=$(usex vorbis)
 		-DMOD_XINE=$(usex xine)
 		-DMOD_XML=$(usex xml)
 	)
@@ -153,6 +170,21 @@ src_configure() {
 	fi
 
 	cmake_src_configure
+}
+
+src_test() {
+	# see setenv in upstream repository
+	local -x MLT_REPOSITORY="${BUILD_DIR}/out/lib/mlt"
+	local -x MLT_DATA="${BUILD_DIR}/out/share/mlt"
+	local -x MLT_PROFILES_PATH="${BUILD_DIR}/out/share/mlt/profiles"
+	local -x MLT_PRESETS_PATH="${BUILD_DIR}/out/share/mlt/presets"
+	local -x LD_LIBRARY_PATH="${BUILD_DIR}/out/lib:${LD_LIBRARY_PATH}"
+	local -x PATH="${BUILD_DIR}/out/bin:${PATH}"
+
+	local CMAKE_SKIP_TESTS=()
+	use !xml && CMAKE_SKIP_TESTS+=( QtTest:xml )
+
+	cmake_src_test
 }
 
 src_install() {
