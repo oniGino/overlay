@@ -42,13 +42,13 @@ RDEPEND="
 	dev-libs/libsigc++:2
 	>=dev-libs/libfmt-8.1.1:=
 	>=dev-libs/spdlog-1.15.2:=
-	cava? ( =media-sound/cava-0.10.7:lukashonakV )
 	dev-libs/date:=
 	dev-libs/wayland
 	>=gui-libs/gtk-layer-shell-0.9.0
 	media-video/pipewire:=
 	x11-libs/gtk+:3[wayland]
 	x11-libs/libxkbcommon
+	cava? ( =media-sound/cava-1.0.0:LukashonakV )
 	evdev? ( dev-libs/libevdev )
 	gps? ( sci-geosciences/gpsd:= )
 	jack? ( virtual/jack )
@@ -79,13 +79,13 @@ DEPEND="${RDEPEND}
 
 src_configure() {
 	local emesonargs=(
-		$(meson_feature man man-pages)
 		$(meson_feature cava)
 		$(meson_feature evdev libevdev)
 		$(meson_feature gps)
 		$(meson_feature jack)
 		$(meson_feature libinput)
 		$(meson_feature logind)
+		$(meson_feature man man-pages)
 		$(meson_feature mpd)
 		$(meson_feature mpris)
 		$(meson_feature network libnl)

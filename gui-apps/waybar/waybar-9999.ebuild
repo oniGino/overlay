@@ -13,13 +13,13 @@ if [[ ${PV} == 9999 ]]; then
 	EGIT_REPO_URI="https://github.com/Alexays/${PN^}.git"
 else
 	SRC_URI="https://github.com/Alexays/${PN^}/archive/${PV}.tar.gz -> ${P}.tar.gz"
-	KEYWORDS="~amd64 ~arm64"
+	KEYWORDS="amd64 ~arm64"
 	S="${WORKDIR}/${PN^}-${PV}"
 fi
 
 LICENSE="MIT"
 SLOT="0"
-IUSE="backlight evdev experimental gps jack +libinput +logind +man mpd mpris network niri pipewire pulseaudio sndio systemd test tray +udev upower wifi"
+IUSE="backlight cava evdev experimental gps jack +libinput +logind +man mpd mpris network niri pipewire pulseaudio sndio systemd test tray +udev upower wifi"
 REQUIRED_USE="
 	upower? ( logind )
 	backlight? ( udev logind )
@@ -41,13 +41,14 @@ RDEPEND="
 	dev-libs/jsoncpp:=
 	dev-libs/libsigc++:2
 	>=dev-libs/libfmt-8.1.1:=
-	>=dev-libs/spdlog-1.10.0:=
+	>=dev-libs/spdlog-1.15.2:=
 	dev-libs/date:=
 	dev-libs/wayland
 	>=gui-libs/gtk-layer-shell-0.9.0
 	media-video/pipewire:=
 	x11-libs/gtk+:3[wayland]
 	x11-libs/libxkbcommon
+	cava? ( =media-sound/cava-1.0.0:LukashonakV )
 	evdev? ( dev-libs/libevdev )
 	gps? ( sci-geosciences/gpsd:= )
 	jack? ( virtual/jack )
@@ -78,7 +79,7 @@ DEPEND="${RDEPEND}
 
 src_configure() {
 	local emesonargs=(
-		-Dcava=disabled # depends on LukashonakV/cava fork, but media-sound/cava is karlstav/cava
+		$(meson_feature cava)
 		$(meson_feature evdev libevdev)
 		$(meson_feature gps)
 		$(meson_feature jack)
