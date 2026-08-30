@@ -1,7 +1,7 @@
 From d12f7e622c5aff6e7093e9ce6f2fcb7e7d56ee3c Mon Sep 17 00:00:00 2001
 From: Louis Stagg <louis.stagg717@gmail.com>
 Date: Sun, 14 Apr 2024 14:01:36 +0100
-Subject: [PATCH] Add support for org.freedesktop.ScreenSaver
+Subject: [PATCH 1/2] Add support for org.freedesktop.ScreenSaver
 
 ---
  main.c         | 330 ++++++++++++++++++++++++++++++++++++++++++++-----
@@ -514,15 +514,15 @@ index 859bc990..6511d3ef 100644
  	swayidle_init();
  	char *config_path = NULL;
  	if (parse_args(argc, argv, &config_path) != 0) {
-@@ -1087,7 +1344,7 @@ int main(int argc, char *argv[]) {
- 
- 	bool should_run = !wl_list_empty(&state.timeout_cmds);
- #if HAVE_SYSTEMD || HAVE_ELOGIND
--	connect_to_bus();
-+	connect_to_system_bus();
- 	setup_property_changed_listener();
+@@ -1383,7 +1383,7 @@
+ 		state.logind_lock_cmd || state.logind_unlock_cmd ||
+ 		state.logind_idlehint;
+ 	if (need_logind) {
+-		connect_to_bus();
++		connect_to_system_bus();
+ 		setup_property_changed_listener();
+ 	}
  	if (state.before_sleep_cmd || state.after_resume_cmd) {
- 		should_run = true;
 @@ -1104,13 +1361,22 @@ int main(int argc, char *argv[]) {
  	if (state.logind_idlehint) {
  		set_idle_hint(false);
@@ -562,3 +562,42 @@ index 084c6a27..b4b19b6f 100644
  # DESCRIPTION
  
  swayidle listens for idle activity on your Wayland compositor and executes tasks
+
+From 4feb96c330f1f6cc4c127f603a2b6e3090168580 Mon Sep 17 00:00:00 2001
+From: Louis Stagg <lrs@ambadoom.net>
+Date: Sun, 29 Sep 2024 11:20:25 +0100
+Subject: [PATCH 2/2] Bind to /ScreenSaver for org.freedesktop.ScreenSaver
+
+Some programs such as vlc look to /ScreenSaver rather than
+/org/freedesktop/ScreenSaver for their inhibiting. This brings us in
+line with what gnome does.
+---
+ main.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+diff --git a/main.c b/main.c
+index 6511d3ef..5a03d22e 100644
+--- a/main.c
++++ b/main.c
+@@ -206,6 +206,7 @@ static void cmd_exec(char *param) {
+ #define DBUS_SCREENSAVER_SERVICE "org.freedesktop.ScreenSaver"
+ #define DBUS_SCREENSAVER_INTERFACE "org.freedesktop.ScreenSaver"
+ #define DBUS_SCREENSAVER_PATH "/org/freedesktop/ScreenSaver"
++#define DBUS_SCREENSAVER_PATH2 "/ScreenSaver"
+ 
+ static void update_timeouts(void);
+ 
+@@ -739,6 +740,13 @@ static void setup_screensaver(void) {
+ 		return;
+ 	}
+ 
++	ret = sd_bus_add_object_vtable(bus_user, NULL, DBUS_SCREENSAVER_PATH2, DBUS_SCREENSAVER_INTERFACE, screensaver_vtable, NULL);
++	if (ret < 0) {
++		errno = -ret;
++		swayidle_log_errno(LOG_ERROR, "Failed to add ScreenSaver vtable");
++		return;
++	}
++
+ 	ret = sd_bus_request_name(bus_user, DBUS_SCREENSAVER_SERVICE, 0);
+ 	if (ret < 0) {
+ 		errno = -ret;
