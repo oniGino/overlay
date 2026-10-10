@@ -6,8 +6,8 @@ EAPI=8
 ECM_TEST="true"
 KDE_ORG_NAME="${PN}-kde"
 KDE_SELINUX_MODULE="${PN}"
-KFMIN=6.22.0
-QTMIN=6.10.1
+KFMIN=6.27.0
+QTMIN=6.11.2
 inherit ecm flag-o-matic gear.kde.org xdg
 
 DESCRIPTION="Adds communication between KDE Plasma and your smartphone"
@@ -20,12 +20,11 @@ IUSE="bluetooth pulseaudio telephony zeroconf X sharedinput"
 
 RESTRICT="test"
 
-# slot op: Uses Qt6::GuiPrivate for qtx11extras_p.h
-# TODO: make conditional on X upstream
+# slot op: Uses Qt6::GuiPrivate for qpa/qplatformnativeinterface.h, qtx11extras_p.h
 COMMON_DEPEND="
 	dev-libs/openssl:=
 	>=dev-libs/wayland-1.15.0
-	>=dev-qt/qtbase-${QTMIN}:6=[dbus,gui,network,wayland,widgets]
+	>=dev-qt/qtbase-${QTMIN}:6=[dbus,gui,network,wayland,widgets,X?]
 	>=dev-qt/qtdeclarative-${QTMIN}:6[widgets]
 	>=dev-qt/qtmultimedia-${QTMIN}:6
 	>=kde-frameworks/kcolorscheme-${KFMIN}:6
@@ -48,7 +47,6 @@ COMMON_DEPEND="
 	>=kde-frameworks/qqc2-desktop-style-${KFMIN}:6
 	>=kde-frameworks/solid-${KFMIN}:6
 	sys-apps/dbus
-	x11-libs/libxkbcommon
 	bluetooth? ( >=dev-qt/qtconnectivity-${QTMIN}:6[bluetooth] )
 	pulseaudio? ( >=media-libs/pulseaudio-qt-1.4:= )
 	telephony? ( >=kde-frameworks/modemmanager-qt-${KFMIN}:6 )
@@ -57,6 +55,7 @@ COMMON_DEPEND="
 		x11-libs/libfakekey
 		x11-libs/libX11
 		x11-libs/libXtst
+		x11-libs/libxkbcommon
 	)
 	sharedinput? ( dev-libs/libei )
 "

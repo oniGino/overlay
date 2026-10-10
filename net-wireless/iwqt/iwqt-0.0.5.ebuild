@@ -18,7 +18,8 @@ SLOT="0"
 KEYWORDS="~amd64"
 
 COMMON_DEPEND="
-	dev-qt/qtbase[gui,widgets,svg]
+	dev-qt/qtbase[gui,widgets]
+	dev-qt/qtsvg
 	dev-cpp/sdbus-c++
 "
 
